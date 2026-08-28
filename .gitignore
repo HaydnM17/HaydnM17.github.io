@@ -11,3 +11,6 @@ dist/
 Thumbs.db
 desktop.ini
 .DS_Store
+
+# scratch preview pages
+_*.html
