@@ -768,3 +768,24 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 }
 .hero-cursor.on { opacity: 1; }
 @media (prefers-reduced-motion: reduce) { .hero-cursor { display: none; } }
+
+/* --- Portfolio page header (stands alone when linked from a resume) -------- */
+.page-name {
+  font-variation-settings: "wdth" 122;
+  font-weight: 800; font-size: clamp(2.6rem, 7vw, 5rem);
+  letter-spacing: -0.035em; margin-top: 0.7rem;
+}
+.page-role {
+  font-size: clamp(1rem, 2vw, 1.35rem); font-weight: 500;
+  color: var(--brass); margin-top: 0.65rem; letter-spacing: 0.01em;
+}
+.page-links {
+  display: flex; flex-wrap: wrap; gap: 0.6rem 1.75rem;
+  margin-top: 1.9rem; font-size: var(--fs-sm);
+}
+.page-links a {
+  color: var(--dim); text-decoration: none;
+  border-bottom: 1px solid var(--line-2); padding-bottom: 2px;
+  transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
+}
+.page-links a:hover { color: var(--brass); border-color: var(--brass); }
