@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Portfolio — Haydn McIntyre</title>
+<meta name="description" content="Applications designed and built by Haydn McIntyre: a staff portal for a pilates studio and a cross-platform workout tracker.">
+<meta name="theme-color" content="#0A100E">
+<meta property="og:title" content="Portfolio — Haydn McIntyre">
+<meta property="og:description" content="Applications designed and built end to end.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="ambient" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+
+<header class="topbar" id="topbar">
+  <div class="wrap topbar-inner">
+    <a class="mark" href="index.html">
+      <svg class="mark-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square">
+          <path d="M8 5 V27"/><path d="M24 5 V27"/>
+          <path d="M8 18 L14.5 13.5 L17.5 18.5 L24 14"/>
+        </g>
+      </svg>
+      <span>Haydn McIntyre</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html#about">About</a>
+      <a href="index.html#services">Services</a>
+      <a href="portfolio.html" class="is-current">Portfolio</a>
+      <a class="nav-cta" href="index.html#contact">Contact</a>
+    </nav>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+      <span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Main (mobile)" hidden>
+    <a href="index.html#about">About</a>
+    <a href="index.html#services">Services</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="index.html#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <section class="wrap page-head">
+    <p class="eyebrow">Portfolio</p>
+    <h2 class="h2">Selected projects.</h2>
+    <div class="bolt-rule" aria-hidden="true">
+      <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+    </div>
+    <p class="page-lede">
+      Applications taken from an empty folder to something documented and running.
+      Each one below lists the stack and exactly what I was responsible for.
+    </p>
+  </section>
+
+  <!-- Movement Unlimited -->
+  <section class="section section-tint">
+    <div class="wrap">
+      <article class="project reveal">
+        <div class="project-media">
+          <button type="button" class="zoom" aria-label="View larger: Movement Unlimited">
+            <img src="assets/work/movement-unlimited.png" alt="Movement Unlimited staff portal." loading="lazy" width="940" height="760">
+          </button>
+        </div>
+        <div class="project-body">
+          <p class="project-meta">ASP.NET Core &middot; Project lead</p>
+          <h3 class="project-title">Movement Unlimited</h3>
+          <p class="project-desc">
+            A staff portal for a pilates studio, replacing the paper and spreadsheet
+            system they were running on. Staff manage sessions, clients, bookings and
+            accounts in one place, with access controlled by role.
+          </p>
+          <p class="project-desc">
+            Built with four other students at Niagara College. I led the project:
+            scoping the requirements with the client, dividing the work, setting the
+            architecture, and taking it through to deployment on Azure.
+          </p>
+          <dl class="case-role">
+            <dt>My role</dt>
+            <dd>
+              <ul>
+                <li>Project lead across a team of five</li>
+                <li>Database schema, relationships and Entity Framework migrations</li>
+                <li>Authentication, roles and permissions with ASP.NET Identity</li>
+                <li>Controllers and Razor views across the application</li>
+                <li>Azure deployment and release configuration</li>
+              </ul>
+            </dd>
+          </dl>
+          <ul class="tags">
+            <li>ASP.NET Core</li><li>C#</li><li>Entity Framework</li><li>SQL Server</li><li>Razor</li><li>Azure</li>
+          </ul>
+          <a class="repo" href="https://github.com/HaydnM17/movement-unlimited-demo" rel="noopener">
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+            </svg>
+            <span>View the repo</span>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Workout Tracker -->
+  <section class="section">
+    <div class="wrap">
+      <article class="project project-alt reveal">
+        <div class="project-media project-media-shots">
+          <button type="button" class="zoom" aria-label="View larger: home screen">
+            <img src="assets/work/workout-home.png" alt="Workout Tracker home screen." loading="lazy" width="448" height="988">
+          </button>
+          <button type="button" class="zoom" aria-label="View larger: live session">
+            <img src="assets/work/workout-session.png" alt="A live workout in progress." loading="lazy" width="444" height="987">
+          </button>
+          <button type="button" class="zoom" aria-label="View larger: statistics">
+            <img src="assets/work/workout-stats.png" alt="Statistics screen." loading="lazy" width="448" height="988">
+          </button>
+        </div>
+        <div class="project-body">
+          <p class="project-meta">.NET MAUI &middot; Solo build</p>
+          <h3 class="project-title">Workout Tracker</h3>
+          <p class="project-desc">
+            Plan a workout, log it live against a running timer, and watch the numbers
+            move over time. Runs fully offline on Android and Windows from a single
+            codebase, storing every session in a local database on the device.
+          </p>
+          <dl class="case-role">
+            <dt>My role</dt>
+            <dd>
+              <ul>
+                <li>Everything: design, build, documentation and release</li>
+                <li>Local SQLite schema with versioned migrations</li>
+                <li>MVVM architecture across thirteen screens</li>
+                <li>Statistics and reporting over historical session data</li>
+                <li>Written user manual and release notes</li>
+              </ul>
+            </dd>
+          </dl>
+          <ul class="tags">
+            <li>.NET MAUI</li><li>C#</li><li>SQLite</li><li>MVVM</li>
+          </ul>
+          <a class="repo" href="https://github.com/HaydnM17/WorkoutApp" rel="noopener">
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+            </svg>
+            <span>View the repo</span>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Technical stack -->
+  <section class="section section-tint" id="stack">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Technical</p>
+        <h2 class="h2">The whole stack.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+      </div>
+      <div class="layers">
+        <article class="layer reveal" style="--d:0ms">
+          <div class="layer-head"><span class="layer-n">01</span><h3>Interface</h3></div>
+          <p class="layer-note">Markup, styling and client-side behaviour, built responsive and to accessibility standards.</p>
+          <ul class="layer-tech"><li>HTML</li><li>CSS</li><li>JavaScript</li><li>Razor</li><li>XAML</li></ul>
+        </article>
+        <article class="layer reveal" style="--d:80ms">
+          <div class="layer-head"><span class="layer-n">02</span><h3>Application</h3></div>
+          <p class="layer-note">Routing, authentication, authorisation and business logic, structured with established patterns.</p>
+          <ul class="layer-tech"><li>C#</li><li>ASP.NET Core</li><li>.NET MAUI</li><li>MVC</li><li>MVVM</li><li>REST APIs</li></ul>
+        </article>
+        <article class="layer reveal" style="--d:160ms">
+          <div class="layer-head"><span class="layer-n">03</span><h3>Data</h3></div>
+          <p class="layer-note">Relational schema design, versioned migrations, and queries written to stay quick as tables grow.</p>
+          <ul class="layer-tech"><li>SQL Server</li><li>SQLite</li><li>Entity Framework</li><li>T-SQL</li><li>Schema design</li></ul>
+        </article>
+        <article class="layer reveal" style="--d:240ms">
+          <div class="layer-head"><span class="layer-n">04</span><h3>Delivery</h3></div>
+          <p class="layer-note">Source control, environment configuration, deployment and release.</p>
+          <ul class="layer-tech"><li>Git</li><li>Azure App Service</li><li>Visual Studio</li><li>CI basics</li></ul>
+        </article>
+      </div>
+      <a class="back-link" href="index.html">Back to the home page</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p class="footer-mark">Haydn McIntyre</p>
+    <a class="footer-gh" href="https://github.com/HaydnM17" rel="noopener">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+      </svg>
+      GitHub
+    </a>
+    <p class="footer-legal">&copy; <span id="year">2026</span> Haydn McIntyre</p>
+  </div>
+</footer>
+
+<dialog class="lightbox" id="lightbox" aria-label="Image viewer">
+  <div class="lightbox-inner">
+    <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Close image">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M5 5 L19 19 M19 5 L5 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      </svg>
+    </button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+</dialog>
+
+<script src="script.js"></script>
+</body>
+</html>

@@ -525,7 +525,7 @@
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!validate()) {
-      setStatus("Have another look at the highlighted fields.", "bad");
+      setStatus("Check the highlighted fields.", "bad");
       return;
     }
 

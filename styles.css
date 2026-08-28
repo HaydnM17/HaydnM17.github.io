@@ -654,3 +654,51 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   .reveal, .reveal.is-in { opacity: 1; transform: none; transition: none; }
   .rise { opacity: 1; transform: none; animation: none; }
 }
+
+/* --- Portfolio teaser (home page) ----------------------------------------- */
+.teaser-lede { color: var(--dim); font-size: var(--fs-lg); max-width: 54ch; margin-top: 1.25rem; }
+.teaser-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 2.5rem; }
+@media (min-width: 700px) { .teaser-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.teaser {
+  display: grid; gap: 0.4rem; align-content: start;
+  padding: 1.25rem; background: var(--ground); text-decoration: none;
+  transition: background 0.3s var(--ease);
+}
+.teaser:hover { background: var(--card); }
+.teaser-shot { display: block; overflow: hidden; background: var(--card); margin-bottom: 0.8rem; aspect-ratio: 4 / 3; }
+.teaser-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform 0.6s var(--ease); }
+.teaser:hover .teaser-shot img { transform: scale(1.04); }
+.teaser-meta {
+  font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--brass);
+}
+.teaser-name { font-variation-settings: "wdth" 112; font-weight: 700; font-size: var(--fs-h3); }
+.teaser-cta { justify-self: start; }
+@media (prefers-reduced-motion: reduce) { .teaser:hover .teaser-shot img { transform: none; } }
+
+/* --- Portfolio page ------------------------------------------------------- */
+.page-head { padding-block: clamp(3.5rem, 8vw, 6rem) clamp(2rem, 4vw, 3rem); position: relative; }
+.page-head .h2 { font-size: var(--fs-hero); font-variation-settings: "wdth" 122; letter-spacing: -0.04em; }
+.page-lede { color: var(--dim); font-size: var(--fs-lg); max-width: 60ch; margin-top: 1.6rem; }
+.back-link {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: var(--fs-sm); font-weight: 600; color: var(--dim); text-decoration: none;
+  margin-top: 2.25rem; transition: color 0.25s var(--ease);
+}
+.back-link:hover { color: var(--brass); }
+.back-link::before { content: "\2190"; }
+.case-role {
+  display: grid; gap: 0.5rem; margin-top: 1.4rem;
+  padding-top: 1.25rem; border-top: 1px solid var(--line);
+}
+.case-role dt {
+  font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--faint);
+}
+.case-role dd { color: var(--dim); font-size: var(--fs-base); }
+.case-role li { color: var(--dim); position: relative; padding-left: 1.05rem; }
+.case-role li::before {
+  content: ""; position: absolute; left: 0; top: 0.68em;
+  width: 5px; height: 5px; background: var(--brass);
+}
+.case-role ul { display: grid; gap: 0.5rem; }

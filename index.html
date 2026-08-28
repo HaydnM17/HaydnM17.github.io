@@ -28,8 +28,8 @@
 <nav class="rail" id="rail" aria-label="Sections">
   <a href="#top" data-sec="top"><span>Top</span></a>
   <a href="#about" data-sec="about"><span>About</span></a>
-  <a href="#work" data-sec="work"><span>Work</span></a>
-  <a href="#toolkit" data-sec="toolkit"><span>Toolkit</span></a>
+  <a href="#portfolio" data-sec="portfolio"><span>Portfolio</span></a>
+  <a href="#services" data-sec="services"><span>Services</span></a>
   <a href="#contact" data-sec="contact"><span>Contact</span></a>
 </nav>
 
@@ -46,8 +46,8 @@
     </a>
     <nav class="nav" aria-label="Main">
       <a href="#about">About</a>
-      <a href="#work">Work</a>
-      <a href="#toolkit">Toolkit</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="#services">Services</a>
       <a class="nav-cta" href="#contact">Contact</a>
     </nav>
     <button class="menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
@@ -56,8 +56,8 @@
   </div>
   <nav class="mobile-nav" id="mobile-nav" aria-label="Main (mobile)" hidden>
     <a href="#about">About</a>
-    <a href="#work">Work</a>
-    <a href="#toolkit">Toolkit</a>
+    <a href="portfolio.html">Portfolio</a>
+    <a href="#services">Services</a>
     <a href="#contact">Contact</a>
   </nav>
 </header>
@@ -114,120 +114,70 @@
     </div>
   </section>
 
-  <!-- Work -->
-  <section class="section section-tint" id="work">
+  <!-- Services -->
+  <section class="section section-tint" id="services">
     <div class="wrap">
       <div class="section-head reveal">
-        <p class="eyebrow">The work</p>
-        <h2 class="h2">Things I've built.</h2>
-        <div class="bolt-rule" aria-hidden="true">
-          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
-        </div>
-      </div>
-
-      <article class="project reveal">
-        <div class="project-media">
-          <button type="button" class="zoom" aria-label="View larger: Movement Unlimited sign-in screen">
-            <img src="assets/work/movement-unlimited.png" alt="Movement Unlimited staff portal sign-in screen." loading="lazy" width="940" height="760">
-          </button>
-        </div>
-        <div class="project-body">
-          <p class="project-meta">Web application &middot; Project lead</p>
-          <h3 class="project-title">Movement Unlimited</h3>
-          <p class="project-desc">
-            A staff portal for a pilates studio &mdash; sessions, clients and accounts
-            in one place. Razor front end, ASP.NET Core with Identity handling
-            sign-in and roles, Entity Framework over SQL Server behind it, the
-            whole thing deployed to Azure. I led a team of five at Niagara College.
-          </p>
-          <ul class="tags">
-            <li>ASP.NET Core</li><li>C#</li><li>Entity Framework</li><li>SQL Server</li><li>Azure</li>
-          </ul>
-          <a class="repo" href="https://github.com/HaydnM17/movement-unlimited-demo" rel="noopener">
-            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
-              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
-            </svg>
-            <span>View the repo</span>
-          </a>
-        </div>
-      </article>
-
-      <article class="project project-alt reveal">
-        <div class="project-media project-media-shots">
-          <button type="button" class="zoom" aria-label="View larger: Workout Tracker home screen">
-            <img src="assets/work/workout-home.png" alt="Workout Tracker home screen with logged workouts and templates." loading="lazy" width="448" height="988">
-          </button>
-          <button type="button" class="zoom" aria-label="View larger: live workout session">
-            <img src="assets/work/workout-session.png" alt="A live workout in progress with a running timer and editable sets." loading="lazy" width="444" height="987">
-          </button>
-          <button type="button" class="zoom" aria-label="View larger: statistics screen">
-            <img src="assets/work/workout-stats.png" alt="Statistics screen showing workout totals over time." loading="lazy" width="448" height="988">
-          </button>
-        </div>
-        <div class="project-body">
-          <p class="project-meta">Mobile &amp; desktop &middot; Solo build</p>
-          <h3 class="project-title">Workout Tracker</h3>
-          <p class="project-desc">
-            Plan a workout, log it live, watch the numbers move. Runs fully offline
-            on Android and Windows. Designed, built and documented on my own.
-          </p>
-          <ul class="tags">
-            <li>.NET MAUI</li><li>C#</li><li>SQLite</li><li>MVVM</li>
-          </ul>
-          <a class="repo" href="https://github.com/HaydnM17/WorkoutApp" rel="noopener">
-            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
-              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
-            </svg>
-            <span>View the repo</span>
-          </a>
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- Toolkit -->
-  <section class="section" id="toolkit">
-    <div class="wrap">
-      <div class="section-head reveal">
-        <p class="eyebrow">Toolkit</p>
-        <h2 class="h2">The whole stack.</h2>
+        <p class="eyebrow">Services</p>
+        <h2 class="h2">What I do for you.</h2>
         <div class="bolt-rule" aria-hidden="true">
           <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
         </div>
       </div>
       <div class="layers">
-        <article class="layer reveal" style="--d:0ms" tabindex="0">
-          <div class="layer-head"><span class="layer-n">01</span><h3>Interface</h3></div>
-          <p class="layer-note">What people see and touch. Laid out for a phone first, because that is where most of your customers are standing.</p>
-          <ul class="layer-tech">
-            <li>HTML</li><li>CSS</li><li>JavaScript</li><li>Responsive layout</li><li>Accessibility</li>
-          </ul>
+        <article class="layer reveal" style="--d:0ms">
+          <div class="layer-head"><span class="layer-n">01</span><h3>Design</h3></div>
+          <p class="layer-note">We work out what your site actually has to do, then I design it around that. Built for your business, not picked off a shelf and recoloured.</p>
         </article>
-        <article class="layer reveal" style="--d:80ms" tabindex="0">
-          <div class="layer-head"><span class="layer-n">02</span><h3>Application</h3></div>
-          <p class="layer-note">The logic underneath. Routing, sign-in, permissions, and the rules the business actually runs on.</p>
-          <ul class="layer-tech">
-            <li>C#</li><li>ASP.NET Core</li><li>.NET MAUI</li><li>MVVM</li><li>APIs</li>
-          </ul>
+        <article class="layer reveal" style="--d:80ms">
+          <div class="layer-head"><span class="layer-n">02</span><h3>Build</h3></div>
+          <p class="layer-note">Written by hand so it stays quick, works properly on a phone, and shows up when someone searches your business name.</p>
         </article>
-        <article class="layer reveal" style="--d:160ms" tabindex="0">
-          <div class="layer-head"><span class="layer-n">03</span><h3>Data</h3></div>
-          <p class="layer-note">Where it all lives. Schemas designed up front, migrations that do not lose anything, queries that stay quick as the table grows.</p>
-          <ul class="layer-tech">
-            <li>SQL Server</li><li>SQLite</li><li>Entity Framework</li><li>Database design</li>
-          </ul>
+        <article class="layer reveal" style="--d:160ms">
+          <div class="layer-head"><span class="layer-n">03</span><h3>Hosting and domain</h3></div>
+          <p class="layer-note">I get it online on a real address, with the security certificate set up so browsers show the padlock and never warn your customers. The domain and hosting accounts go in your name, so you own them outright.</p>
         </article>
-        <article class="layer reveal" style="--d:240ms" tabindex="0">
-          <div class="layer-head"><span class="layer-n">04</span><h3>Delivery</h3></div>
-          <p class="layer-note">Getting it live and keeping it that way. Hosting, deployment, version control, and the handover so it is yours.</p>
-          <ul class="layer-tech">
-            <li>Azure</li><li>Git</li><li>Static hosting</li><li>Domains &amp; HTTPS</li>
-          </ul>
+        <article class="layer reveal" style="--d:240ms">
+          <div class="layer-head"><span class="layer-n">04</span><h3>Handover, or I keep it running</h3></div>
+          <p class="layer-note">Your choice. I can show you how to update your own hours, prices and photos, or you send me the changes and I make them. No lock-in either way.</p>
         </article>
       </div>
     </div>
   </section>
 
+  <!-- Portfolio teaser -->
+  <section class="section" id="portfolio">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Portfolio</p>
+        <h2 class="h2">Selected projects.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+        <p class="teaser-lede">Applications I have designed and built end to end. Website work joins these as it ships.</p>
+      </div>
+
+      <div class="teaser-grid reveal">
+        <a class="teaser" href="portfolio.html">
+          <span class="teaser-shot"><img src="assets/work/movement-unlimited.png" alt="Movement Unlimited staff portal." loading="lazy" width="940" height="760"></span>
+          <span class="teaser-meta">Web application</span>
+          <span class="teaser-name">Movement Unlimited</span>
+        </a>
+        <a class="teaser" href="portfolio.html">
+          <span class="teaser-shot"><img src="assets/work/workout-home.png" alt="Workout Tracker home screen." loading="lazy" width="448" height="988"></span>
+          <span class="teaser-meta">Mobile and desktop</span>
+          <span class="teaser-name">Workout Tracker</span>
+        </a>
+        <a class="teaser" href="portfolio.html">
+          <span class="teaser-shot"><img src="assets/work/workout-stats.png" alt="Workout Tracker statistics screen." loading="lazy" width="448" height="988"></span>
+          <span class="teaser-meta">Data and reporting</span>
+          <span class="teaser-name">Statistics engine</span>
+        </a>
+      </div>
+
+      <a class="btn btn-primary teaser-cta reveal" href="portfolio.html">See the full portfolio</a>
+    </div>
+  </section>
 
   <!-- Contact -->
   <section class="section section-tint" id="contact">
@@ -247,17 +197,17 @@
         <div class="field">
           <label for="f-name">Name</label>
           <input id="f-name" name="name" type="text" autocomplete="name" required>
-          <p class="err" data-for="f-name" hidden>Please tell me what to call you.</p>
+          <p class="err" data-for="f-name" hidden>Enter your name.</p>
         </div>
         <div class="field">
           <label for="f-email">Email</label>
           <input id="f-email" name="email" type="email" autocomplete="email" required>
-          <p class="err" data-for="f-email" hidden>That address does not look right.</p>
+          <p class="err" data-for="f-email" hidden>Enter a valid email address.</p>
         </div>
         <div class="field">
           <label for="f-msg">Message</label>
           <textarea id="f-msg" name="message" rows="4" required></textarea>
-          <p class="err" data-for="f-msg" hidden>A sentence or two is enough.</p>
+          <p class="err" data-for="f-msg" hidden>Enter a message.</p>
         </div>
         <button class="btn btn-primary btn-submit" type="submit">Send it</button>
         <p class="form-note" id="form-status" role="status"></p>
