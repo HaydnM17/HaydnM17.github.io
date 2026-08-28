@@ -54,9 +54,10 @@
     });
   }
 
-  /* ---- Hero orbits -------------------------------------------------------
-     Each dot walks a slow ellipse on a faint visible path. Bring the pointer
-     near and those orbits speed up and warm to brass, then ease back down. */
+  /* ---- Hero depth field --------------------------------------------------
+     Three layers of dots drifting upward at different sizes and speeds. The
+     pointer shifts each layer by a different amount, so the field parallaxes
+     and reads as depth rather than as a flat sheet of particles. */
   (function () {
     var canvas = document.getElementById("hero-canvas");
     if (!canvas || !canvas.getContext) return;
@@ -64,33 +65,36 @@
     var ctx = canvas.getContext("2d");
     var w = 0, h = 0, dpr = 1;
     var running = false, frame = 0, last = 0;
-    var orbits = [];
+    var dots = [];
 
-    var REACH = 250;   // how far the pointer's pull carries
-    var BOOST = 2.6;   // top speed multiplier at the centre of that reach
+    /* radius, rise (px/sec), alpha, parallax travel (px), tint */
+    var LAYERS = [
+      { r: 1.0, rise: 5,  alpha: 0.15, shift: 10, tint: "236, 241, 236", share: 0.46 },
+      { r: 1.7, rise: 12, alpha: 0.27, shift: 21, tint: "236, 241, 236", share: 0.34 },
+      { r: 2.6, rise: 23, alpha: 0.52, shift: 36, tint: "63, 217, 192",  share: 0.20 }
+    ];
 
     var cursor = { x: 0, y: 0, on: false };
     var glow = document.getElementById("hero-cursor");
+    var px = 0, py = 0; // eased parallax, -1..1
 
     var rand = function (min, max) { return min + Math.random() * (max - min); };
 
     var build = function () {
-      var count = Math.round((w * h) / 16000);
-      count = Math.max(18, Math.min(count, 72));
+      var total = Math.round((w * h) / 11000);
+      total = Math.max(30, Math.min(total, 130));
 
-      orbits = [];
-      for (var i = 0; i < count; i++) {
-        orbits.push({
-          cx: Math.random(),          // centre, kept as a fraction so resize is free
-          cy: Math.random(),
-          rx: rand(16, 74),           // ellipse radii
-          ry: rand(9, 46),
-          tilt: rand(0, Math.PI),     // rotation of the ellipse
-          a: rand(0, Math.PI * 2),    // current angle along the path
-          sp: rand(0.10, 0.34),       // radians per second
-          r: rand(1, 2.4),            // dot radius
-          lit: 0                      // eased 0..1 nearness to the pointer
-        });
+      dots = [];
+      for (var li = 0; li < LAYERS.length; li++) {
+        var n = Math.round(total * LAYERS[li].share);
+        for (var i = 0; i < n; i++) {
+          dots.push({
+            x: Math.random(),          // fractions, so a resize costs nothing
+            y: Math.random(),
+            drift: rand(-3, 3),        // slight sideways wander, px/sec
+            li: li
+          });
+        }
       }
     };
 
@@ -106,43 +110,29 @@
     };
 
     var paint = function (dt) {
+      /* ease the parallax so it glides when the pointer jumps or leaves */
+      var tx = cursor.on ? (cursor.x - w / 2) / (w / 2) : 0;
+      var ty = cursor.on ? (cursor.y - h / 2) / (h / 2) : 0;
+      px += (tx - px) * Math.min(dt * 2.6, 1);
+      py += (ty - py) * Math.min(dt * 2.6, 1);
+
       ctx.clearRect(0, 0, w, h);
 
-      for (var i = 0; i < orbits.length; i++) {
-        var o = orbits[i];
-        var cx = o.cx * w;
-        var cy = o.cy * h;
+      for (var i = 0; i < dots.length; i++) {
+        var d = dots[i];
+        var L = LAYERS[d.li];
 
-        var target = 0;
-        if (cursor.on) {
-          var dx = cursor.x - cx;
-          var dy = cursor.y - cy;
-          var d = Math.sqrt(dx * dx + dy * dy);
-          if (d < REACH) target = 1 - d / REACH;
-        }
-        /* ease the nearness so speed changes glide instead of snapping */
-        o.lit += (target - o.lit) * Math.min(dt * 4, 1);
+        d.y -= (L.rise / h) * dt;
+        d.x += (d.drift / w) * dt;
+        if (d.y < -0.04) { d.y = 1.04; d.x = Math.random(); }
+        if (d.x < -0.04) d.x = 1.04; else if (d.x > 1.04) d.x = -0.04;
 
-        /* accumulate the angle, so a speed change never jumps the dot */
-        o.a += o.sp * (1 + o.lit * BOOST) * dt;
+        var x = d.x * w - px * L.shift;
+        var y = d.y * h - py * L.shift * 0.6;
 
-        var px = cx + Math.cos(o.a) * o.rx;
-        var py = cy + Math.sin(o.a) * o.ry;
-        /* apply the ellipse tilt around its own centre */
-        var ct = Math.cos(o.tilt), st = Math.sin(o.tilt);
-        var rx = cx + (px - cx) * ct - (py - cy) * st;
-        var ry = cy + (px - cx) * st + (py - cy) * ct;
-
-        ctx.strokeStyle = "rgba(236, 241, 236, " + (0.075 + o.lit * 0.13).toFixed(3) + ")";
-        ctx.lineWidth = 1;
+        ctx.fillStyle = "rgba(" + L.tint + ", " + L.alpha + ")";
         ctx.beginPath();
-        ctx.ellipse(cx, cy, o.rx, o.ry, o.tilt, 0, Math.PI * 2);
-        ctx.stroke();
-
-        ctx.fillStyle = "rgba(" + (o.lit > 0.3 ? "229, 180, 87" : "236, 241, 236") +
-                        ", " + (0.36 + o.lit * 0.58).toFixed(3) + ")";
-        ctx.beginPath();
-        ctx.arc(rx, ry, o.r * (1 + o.lit * 0.8), 0, Math.PI * 2);
+        ctx.arc(x, y, L.r, 0, Math.PI * 2);
         ctx.fill();
       }
     };
@@ -154,7 +144,7 @@
       if (running) frame = requestAnimationFrame(step);
     };
 
-    /* reduced motion: rings and dots drawn once, nothing moving */
+    /* reduced motion: one still frame, no rise and no parallax */
     var still = function () { paint(0); };
 
     var stop = function () {
