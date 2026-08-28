@@ -451,7 +451,7 @@ body.is-locked { overflow: hidden; }
 .bolt-rule svg { display: block; width: 100%; height: 100%; overflow: visible; }
 .bolt-rule polyline {
   fill: none; stroke: var(--brass); stroke-width: 2;
-  stroke-linecap: round; stroke-linejoin: round;
+  stroke-linecap: butt; stroke-linejoin: miter; stroke-miterlimit: 10;
   stroke-dasharray: 1; stroke-dashoffset: 1;
 }
 .bolt-rule.is-in polyline {
