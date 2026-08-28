@@ -54,9 +54,9 @@
     });
   }
 
-  /* ---- Hero line field ---------------------------------------------------
-     A grid of short strokes that drift on their own and swing to circle the
-     pointer as it passes. Same line language as the rules under the headings. */
+  /* ---- Hero dot grid -----------------------------------------------------
+     Dots on a strict grid with a slow breathing wave under them. The pointer
+     pushes them aside like a finger through sand, and they settle back. */
   (function () {
     var canvas = document.getElementById("hero-canvas");
     if (!canvas || !canvas.getContext) return;
@@ -65,9 +65,9 @@
     var w = 0, h = 0, dpr = 1;
     var running = false, frame = 0, start = 0;
 
-    var GAP = 44;      // px between strokes
-    var LEN = 13;      // resting length of one stroke
-    var REACH = 250;   // how far the pointer's influence carries
+    var GAP = 34;     // px between dots
+    var REACH = 190;  // how far the push carries
+    var PUSH = 30;    // px a dot moves at the centre of that reach
 
     var cursor = { x: 0, y: 0, on: false };
     var glow = document.getElementById("hero-cursor");
@@ -84,45 +84,34 @@
 
     var paint = function (elapsed) {
       ctx.clearRect(0, 0, w, h);
-      ctx.lineCap = "round";
 
-      for (var x = GAP / 2; x < w + GAP; x += GAP) {
-        for (var y = GAP / 2; y < h + GAP; y += GAP) {
-          /* two out-of-step waves give a slow, non-repeating drift */
-          var angle = Math.sin(x * 0.011 + elapsed * 0.16) * 0.9 +
-                      Math.cos(y * 0.013 - elapsed * 0.12) * 0.9;
-          var lit = 0;
+      for (var x = GAP / 2; x < w; x += GAP) {
+        for (var y = GAP / 2; y < h; y += GAP) {
+          var ox = 0, oy = 0, lit = 0;
 
           if (cursor.on) {
-            var dx = cursor.x - x;
-            var dy = cursor.y - y;
+            var dx = x - cursor.x;
+            var dy = y - cursor.y;
             var d = Math.sqrt(dx * dx + dy * dy);
-            if (d < REACH) {
-              lit = 1 - d / REACH;
-              lit = lit * lit;
-              /* swing tangential to the pointer, so the field circles it */
-              var around = Math.atan2(dy, dx) + Math.PI / 2;
-              var diff = Math.atan2(Math.sin(around - angle), Math.cos(around - angle));
-              angle += diff * lit;
+            if (d < REACH && d > 0.001) {
+              var f = 1 - d / REACH;
+              lit = f * f;
+              var shove = f * PUSH;
+              ox = (dx / d) * shove;
+              oy = (dy / d) * shove;
             }
           }
 
-          var len = LEN * (1 + lit * 1.1);
-          var cx = Math.cos(angle) * len * 0.5;
-          var cy = Math.sin(angle) * len * 0.5;
+          /* two slow waves, out of step, so the field breathes without looping */
+          var wave = Math.sin(x * 0.019 + elapsed * 0.62) *
+                     Math.cos(y * 0.021 - elapsed * 0.44);
 
-          if (lit > 0.04) {
-            ctx.strokeStyle = "rgba(229, 180, 87, " + (0.18 + lit * 0.72).toFixed(3) + ")";
-            ctx.lineWidth = 1 + lit * 0.9;
-          } else {
-            ctx.strokeStyle = "rgba(236, 241, 236, 0.20)";
-            ctx.lineWidth = 1;
-          }
-
+          var alpha = 0.13 + lit * 0.62 + wave * 0.05;
+          ctx.fillStyle = "rgba(" + (lit > 0.32 ? "229, 180, 87" : "236, 241, 236") +
+                          ", " + Math.max(alpha, 0.03).toFixed(3) + ")";
           ctx.beginPath();
-          ctx.moveTo(x - cx, y - cy);
-          ctx.lineTo(x + cx, y + cy);
-          ctx.stroke();
+          ctx.arc(x + ox, y + oy, 1.3 + lit * 2.3, 0, Math.PI * 2);
+          ctx.fill();
         }
       }
     };
@@ -132,7 +121,18 @@
       if (running) frame = requestAnimationFrame(step);
     };
 
-    var still = function () { paint(0); };
+    /* reduced motion: one still frame, no wave and no push */
+    var still = function () {
+      ctx.clearRect(0, 0, w, h);
+      ctx.fillStyle = "rgba(236, 241, 236, 0.13)";
+      for (var x = GAP / 2; x < w; x += GAP) {
+        for (var y = GAP / 2; y < h; y += GAP) {
+          ctx.beginPath();
+          ctx.arc(x, y, 1.3, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    };
 
     var stop = function () {
       running = false;
