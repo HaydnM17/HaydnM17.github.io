@@ -54,10 +54,10 @@
     });
   }
 
-  /* ---- Hero depth field --------------------------------------------------
-     Three layers of dots drifting upward at different sizes and speeds. The
-     pointer shifts each layer by a different amount, so the field parallaxes
-     and reads as depth rather than as a flat sheet of particles. */
+  /* ---- Hero particle web -------------------------------------------------
+     Drifting dots that lean toward the pointer. Straight hairlines link the
+     ones near it, so the web forms around the cursor and fades away behind it
+     instead of hanging over the whole hero like a cobweb. */
   (function () {
     var canvas = document.getElementById("hero-canvas");
     if (!canvas || !canvas.getContext) return;
@@ -67,34 +67,32 @@
     var running = false, frame = 0, last = 0;
     var dots = [];
 
-    /* radius, rise (px/sec), alpha, parallax travel (px), tint */
-    var LAYERS = [
-      { r: 1.0, rise: 5,  alpha: 0.15, shift: 10, tint: "236, 241, 236", share: 0.46 },
-      { r: 1.7, rise: 12, alpha: 0.27, shift: 21, tint: "236, 241, 236", share: 0.34 },
-      { r: 2.6, rise: 23, alpha: 0.52, shift: 36, tint: "63, 217, 192",  share: 0.20 }
-    ];
+    var REACH = 240;   // how far the pointer's influence carries
+    var PULL = 150;    // px/s² of lean toward the pointer
+    var LINK = 118;    // two dots closer than this can be linked
+    var SPOKE = 155;   // dots closer than this link to the pointer itself
 
     var cursor = { x: 0, y: 0, on: false };
     var glow = document.getElementById("hero-cursor");
-    var px = 0, py = 0; // eased parallax, -1..1
 
     var rand = function (min, max) { return min + Math.random() * (max - min); };
 
     var build = function () {
-      var total = Math.round((w * h) / 11000);
-      total = Math.max(30, Math.min(total, 130));
+      var count = Math.round((w * h) / 13500);
+      count = Math.max(28, Math.min(count, 88));
 
       dots = [];
-      for (var li = 0; li < LAYERS.length; li++) {
-        var n = Math.round(total * LAYERS[li].share);
-        for (var i = 0; i < n; i++) {
-          dots.push({
-            x: Math.random(),          // fractions, so a resize costs nothing
-            y: Math.random(),
-            drift: rand(-3, 3),        // slight sideways wander, px/sec
-            li: li
-          });
-        }
+      for (var i = 0; i < count; i++) {
+        dots.push({
+          x: Math.random() * w,
+          y: Math.random() * h,
+          bvx: rand(-11, 11),   // base drift, px/sec
+          bvy: rand(-9, 9),
+          ivx: 0,               // pointer-induced velocity, decays away
+          ivy: 0,
+          lit: 0,               // eased 0..1 nearness to the pointer
+          r: rand(1, 2.3)
+        });
       }
     };
 
@@ -110,29 +108,88 @@
     };
 
     var paint = function (dt) {
-      /* ease the parallax so it glides when the pointer jumps or leaves */
-      var tx = cursor.on ? (cursor.x - w / 2) / (w / 2) : 0;
-      var ty = cursor.on ? (cursor.y - h / 2) / (h / 2) : 0;
-      px += (tx - px) * Math.min(dt * 2.6, 1);
-      py += (ty - py) * Math.min(dt * 2.6, 1);
-
       ctx.clearRect(0, 0, w, h);
 
-      for (var i = 0; i < dots.length; i++) {
-        var d = dots[i];
-        var L = LAYERS[d.li];
+      var damp = Math.exp(-2.2 * dt); // lean bleeds off once you move away
+      var i, j, a, b, dx, dy, d;
 
-        d.y -= (L.rise / h) * dt;
-        d.x += (d.drift / w) * dt;
-        if (d.y < -0.04) { d.y = 1.04; d.x = Math.random(); }
-        if (d.x < -0.04) d.x = 1.04; else if (d.x > 1.04) d.x = -0.04;
+      for (i = 0; i < dots.length; i++) {
+        a = dots[i];
 
-        var x = d.x * w - px * L.shift;
-        var y = d.y * h - py * L.shift * 0.6;
+        var target = 0;
+        if (cursor.on) {
+          dx = cursor.x - a.x;
+          dy = cursor.y - a.y;
+          d = Math.sqrt(dx * dx + dy * dy);
+          if (d < REACH && d > 0.001) {
+            target = 1 - d / REACH;
+            /* ease off at the very centre so nothing piles onto the pointer */
+            var force = PULL * target * Math.min(d / 45, 1);
+            a.ivx += (dx / d) * force * dt;
+            a.ivy += (dy / d) * force * dt;
+          }
+        }
+        a.lit += (target - a.lit) * Math.min(dt * 5, 1);
 
-        ctx.fillStyle = "rgba(" + L.tint + ", " + L.alpha + ")";
+        a.ivx *= damp;
+        a.ivy *= damp;
+        a.x += (a.bvx + a.ivx) * dt;
+        a.y += (a.bvy + a.ivy) * dt;
+
+        /* wrap, so the field never thins out at an edge */
+        if (a.x < -20) a.x = w + 20; else if (a.x > w + 20) a.x = -20;
+        if (a.y < -20) a.y = h + 20; else if (a.y > h + 20) a.y = -20;
+      }
+
+      /* straight hairlines between neighbours, brightest near the pointer */
+      ctx.lineWidth = 1;
+      for (i = 0; i < dots.length; i++) {
+        a = dots[i];
+        for (j = i + 1; j < dots.length; j++) {
+          b = dots[j];
+          dx = a.x - b.x;
+          dy = a.y - b.y;
+          var d2 = dx * dx + dy * dy;
+          if (d2 > LINK * LINK) continue;
+
+          d = Math.sqrt(d2);
+          var near = Math.max(a.lit, b.lit);
+          var alpha = (1 - d / LINK) * (0.045 + near * 0.42);
+          if (alpha < 0.012) continue;
+
+          ctx.strokeStyle = near > 0.3
+            ? "rgba(229, 180, 87, " + alpha.toFixed(3) + ")"
+            : "rgba(236, 241, 236, " + alpha.toFixed(3) + ")";
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+
+      /* spokes from the pointer to whatever is closest */
+      if (cursor.on) {
+        for (i = 0; i < dots.length; i++) {
+          a = dots[i];
+          dx = a.x - cursor.x;
+          dy = a.y - cursor.y;
+          d = Math.sqrt(dx * dx + dy * dy);
+          if (d > SPOKE) continue;
+          ctx.strokeStyle = "rgba(229, 180, 87, " + ((1 - d / SPOKE) * 0.30).toFixed(3) + ")";
+          ctx.beginPath();
+          ctx.moveTo(cursor.x, cursor.y);
+          ctx.lineTo(a.x, a.y);
+          ctx.stroke();
+        }
+      }
+
+      for (i = 0; i < dots.length; i++) {
+        a = dots[i];
+        ctx.fillStyle = a.lit > 0.32
+          ? "rgba(229, 180, 87, " + (0.45 + a.lit * 0.5).toFixed(3) + ")"
+          : "rgba(236, 241, 236, 0.42)";
         ctx.beginPath();
-        ctx.arc(x, y, L.r, 0, Math.PI * 2);
+        ctx.arc(a.x, a.y, a.r * (1 + a.lit * 0.7), 0, Math.PI * 2);
         ctx.fill();
       }
     };
@@ -144,7 +201,7 @@
       if (running) frame = requestAnimationFrame(step);
     };
 
-    /* reduced motion: one still frame, no rise and no parallax */
+    /* reduced motion: one still frame, no drift and no pointer response */
     var still = function () { paint(0); };
 
     var stop = function () {
