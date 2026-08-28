@@ -92,8 +92,8 @@
         particles.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          bvx: rand(-9, 9),         // base drift, px per second
-          bvy: rand(-7, 7),
+          bvx: rand(-24, 24),         // base drift, px per second
+          bvy: rand(-19, 19),
           ivx: 0,                   // cursor-induced velocity, decays away
           ivy: 0,
           lit: 0,                   // 0..1, how close to the cursor

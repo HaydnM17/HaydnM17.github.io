@@ -702,3 +702,19 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   width: 5px; height: 5px; background: var(--brass);
 }
 .case-role ul { display: grid; gap: 0.5rem; }
+
+/* --- Skills (portfolio page) ---------------------------------------------- */
+.skills { display: grid; gap: 2rem 3rem; }
+@media (min-width: 680px)  { .skills { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1000px) { .skills { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.skill-group h3 {
+  font-size: var(--fs-label); font-weight: 600;
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--brass); margin-bottom: 0.85rem;
+}
+.skill-group ul { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.skill-group li {
+  font-size: var(--fs-label); font-weight: 500; letter-spacing: 0.03em;
+  padding: 0.3rem 0.62rem;
+  border: 1px solid var(--line-2); color: var(--dim);
+}
