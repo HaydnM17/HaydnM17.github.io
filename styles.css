@@ -718,3 +718,35 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   padding: 0.3rem 0.62rem;
   border: 1px solid var(--line-2); color: var(--dim);
 }
+
+/* --- Portfolio dropdown --------------------------------------------------- */
+.nav-drop { position: relative; display: flex; align-items: center; }
+.drop-menu {
+  position: absolute; top: calc(100% + 14px); left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+  display: grid; min-width: 190px;
+  background: rgba(15, 24, 21, 0.97);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--line-int);
+  opacity: 0; visibility: hidden; pointer-events: none;
+  transition: opacity 0.22s var(--ease), transform 0.22s var(--ease), visibility 0.22s;
+  z-index: 60;
+}
+/* bridges the gap so the menu does not close as the pointer travels to it */
+.nav-drop::after { content: ""; position: absolute; top: 100%; left: 0; right: 0; height: 16px; }
+.nav-drop:hover .drop-menu,
+.nav-drop:focus-within .drop-menu {
+  opacity: 1; visibility: visible; pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+.drop-menu a {
+  padding: 0.7rem 1rem;
+  font-size: var(--fs-sm); font-weight: 500; color: var(--dim);
+  text-decoration: none; border-bottom: 1px solid var(--line);
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+.drop-menu a:last-child { border-bottom: 0; }
+.drop-menu a:hover, .drop-menu a:focus-visible { background: var(--card); color: var(--brass); }
+.drop-menu a::after { content: none; }
+@media (prefers-reduced-motion: reduce) { .drop-menu { transition: none; } }
+.mobile-nav a.sub { padding-left: calc(var(--gutter) + 1.1rem); font-size: var(--fs-sm); color: var(--dim); }

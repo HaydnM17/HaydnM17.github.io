@@ -38,7 +38,15 @@
     </a>
     <nav class="nav" aria-label="Main">
       <a href="index.html">Home</a>
-      <a href="portfolio.html" class="is-current">Portfolio</a>
+      <div class="nav-drop">
+        <a href="portfolio.html" class="is-current">Portfolio</a>
+        <div class="drop-menu">
+          <a href="portfolio.html#websites">Websites</a>
+          <a href="portfolio.html#web-app">Web application</a>
+          <a href="portfolio.html#mobile">Mobile app</a>
+          <a href="portfolio.html#skills">Technical skills</a>
+        </div>
+      </div>
       <a href="index.html#about">About</a>
       <a href="index.html#services">Services</a>
       <a class="nav-cta" href="index.html#contact">Contact</a>
@@ -50,6 +58,14 @@
   <nav class="mobile-nav" id="mobile-nav" aria-label="Main (mobile)" hidden>
     <a href="index.html">Home</a>
     <a href="portfolio.html">Portfolio</a>
+    <a href="portfolio.html#websites" class="sub">Websites</a>
+    <a href="portfolio.html#web-app" class="sub">Web application</a>
+    <a href="portfolio.html#mobile" class="sub">Mobile app</a>
+    <a href="portfolio.html#skills" class="sub">Technical skills</a>
+    <a href="portfolio.html#websites" class="sub">Websites</a>
+    <a href="portfolio.html#web-app" class="sub">Web application</a>
+    <a href="portfolio.html#mobile" class="sub">Mobile app</a>
+    <a href="portfolio.html#skills" class="sub">Technical skills</a>
     <a href="index.html#about">About</a>
     <a href="index.html#services">Services</a>
     <a href="index.html#contact">Contact</a>
@@ -58,25 +74,74 @@
 
 <main id="main">
 
+  <nav class="rail" id="rail" aria-label="Sections">
+    <a href="#websites" data-sec="websites"><span>Websites</span></a>
+    <a href="#web-app" data-sec="web-app"><span>Web app</span></a>
+    <a href="#mobile" data-sec="mobile"><span>Mobile app</span></a>
+    <a href="#skills" data-sec="skills"><span>Skills</span></a>
+  </nav>
+
   <section class="wrap page-head">
     <p class="eyebrow">Portfolio</p>
-    <h2 class="h2">Selected projects.</h2>
+    <h2 class="h2">Projects.</h2>
     <div class="bolt-rule" aria-hidden="true">
       <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
     </div>
-    <p class="page-lede">
-      Applications taken from an empty folder to something documented and running.
-      Each one below lists the stack and exactly what I was responsible for.
-    </p>
   </section>
 
-  <!-- Movement Unlimited -->
-  <section class="section section-tint">
+  <!-- Websites -->
+  <section class="section section-tint" id="websites">
     <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Websites</p>
+        <h2 class="h2">Websites.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+      </div>
       <article class="project reveal">
         <div class="project-media">
+          <button type="button" class="zoom" aria-label="View larger: this website">
+            <img src="assets/work/this-site.png" alt="The home page of this website." loading="lazy" width="1400" height="900">
+          </button>
+        </div>
+        <div class="project-body">
+          <p class="project-meta">Website &middot; Solo build</p>
+          <h3 class="project-title">This site</h3>
+          <p class="project-desc">
+            Built by hand with no frameworks and no page builder. An animated particle
+            field in the hero that reacts to the cursor, a scroll progress bar, live
+            section tracking, and a lightbox on every screenshot. Made to work on a
+            phone first and to stay quick.
+          </p>
+          <ul class="tags">
+            <li>HTML</li><li>CSS</li><li>JavaScript</li><li>Canvas</li><li>GitHub Pages</li>
+          </ul>
+          <a class="repo" href="https://github.com/HaydnM17/HaydnM17.github.io" rel="noopener">
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+            </svg>
+            <span>View the repo</span>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Web application -->
+  <section class="section" id="web-app">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Web application</p>
+        <h2 class="h2">Web applications.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+      </div>
+      <article class="project project-alt reveal">
+        <div class="project-media">
           <button type="button" class="zoom" aria-label="View larger: Movement Unlimited">
-            <img src="assets/work/movement-unlimited.png" alt="Movement Unlimited staff portal." loading="lazy" width="940" height="760">
+            <img src="assets/work/movement-unlimited.png" alt="Movement Unlimited sign-in screen." loading="lazy" width="940" height="760">
           </button>
         </div>
         <div class="project-body">
@@ -84,16 +149,11 @@
           <h3 class="project-title">Movement Unlimited</h3>
           <p class="project-desc">
             A full session tracking application for a pilates studio, replacing the
-            paper and spreadsheet system they were running on. Members and staff
-            sign in to their own accounts, sessions are booked and logged, client
-            records are kept in one place, and the reporting side turns all of it
-            into statistics on attendance and activity over time. What each person
-            can see and do is controlled by their role.
-          </p>
-          <p class="project-desc">
-            Built with four other students at Niagara College. I led the project:
-            scoping the requirements with the client, dividing the work, setting the
-            architecture, and taking it through to deployment on Azure.
+            paper and spreadsheet system they were running on. Members and staff sign
+            in to their own accounts, sessions are booked and logged, client records
+            are kept in one place, and the reporting side turns all of it into
+            statistics on attendance and activity over time. What each person can see
+            and do is controlled by their role.
           </p>
           <dl class="case-role">
             <dt>My role</dt>
@@ -121,10 +181,17 @@
     </div>
   </section>
 
-  <!-- Workout Tracker -->
-  <section class="section">
+  <!-- Mobile app -->
+  <section class="section section-tint" id="mobile">
     <div class="wrap">
-      <article class="project project-alt reveal">
+      <div class="section-head reveal">
+        <p class="eyebrow">Mobile app</p>
+        <h2 class="h2">Mobile apps.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+      </div>
+      <article class="project reveal">
         <div class="project-media project-media-shots">
           <button type="button" class="zoom" aria-label="View larger: home screen">
             <img src="assets/work/workout-home.png" alt="Workout Tracker home screen." loading="lazy" width="448" height="988">
@@ -137,12 +204,12 @@
           </button>
         </div>
         <div class="project-body">
-          <p class="project-meta">.NET MAUI &middot; Solo build</p>
+          <p class="project-meta">Android &middot; Solo build</p>
           <h3 class="project-title">Workout Tracker</h3>
           <p class="project-desc">
-            Plan a workout, log it live against a running timer, and watch the numbers
-            move over time. Runs fully offline on Android and Windows from a single
-            codebase, storing every session in a local database on the device.
+            An Android app for planning workouts, logging them live against a running
+            timer, and watching the numbers move over time. Runs fully offline,
+            storing every session in a local database on the phone.
           </p>
           <dl class="case-role">
             <dt>My role</dt>
@@ -157,7 +224,7 @@
             </dd>
           </dl>
           <ul class="tags">
-            <li>.NET MAUI</li><li>C#</li><li>SQLite</li><li>MVVM</li>
+            <li>.NET MAUI</li><li>C#</li><li>SQLite</li><li>MVVM</li><li>Android</li>
           </ul>
           <a class="repo" href="https://github.com/HaydnM17/WorkoutApp" rel="noopener">
             <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
@@ -171,7 +238,7 @@
   </section>
 
   <!-- Skills -->
-  <section class="section section-tint" id="skills">
+  <section class="section" id="skills">
     <div class="wrap">
       <div class="section-head reveal">
         <p class="eyebrow">Skills</p>
@@ -213,9 +280,6 @@
   </section>
 
 </main>
-
-<footer class="footer">
-  <div class="wrap footer-inner">
     <p class="footer-mark">Haydn McIntyre</p>
     <a class="footer-gh" href="https://github.com/HaydnM17" rel="noopener">
       <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
