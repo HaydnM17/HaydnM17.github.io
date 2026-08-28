@@ -1,0 +1,13 @@
+# Generated single-file build — rebuild it any time with build-standalone.sh
+dist/
+
+# Visual Studio
+.vs/
+
+# Local Claude Code settings — machine specific, not part of the site
+.claude/
+
+# OS junk
+Thumbs.db
+desktop.ini
+.DS_Store

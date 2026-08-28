@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haydn McIntyre — Full Stack Developer</title>
+<meta name="description" content="Haydn McIntyre — full stack developer. Fully customized websites, web apps, and the software behind them.">
+<meta name="theme-color" content="#0A100E">
+<meta property="og:title" content="Haydn McIntyre — Full Stack Developer">
+<meta property="og:description" content="Fully customized websites, web apps, and the software behind them.">
+<meta property="og:type" content="website">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<div class="ambient" aria-hidden="true"></div>
+<div class="progress" aria-hidden="true"><span id="progress-bar"></span></div>
+
+<nav class="rail" id="rail" aria-label="Sections">
+  <a href="#top" data-sec="top"><span>Top</span></a>
+  <a href="#about" data-sec="about"><span>About</span></a>
+  <a href="#work" data-sec="work"><span>Work</span></a>
+  <a href="#toolkit" data-sec="toolkit"><span>Toolkit</span></a>
+  <a href="#contact" data-sec="contact"><span>Contact</span></a>
+</nav>
+
+<header class="topbar" id="topbar">
+  <div class="wrap topbar-inner">
+    <a class="mark" href="#top">
+      <svg class="mark-glyph" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="square">
+          <path d="M8 5 V27"/><path d="M24 5 V27"/>
+          <path d="M8 18 L14.5 13.5 L17.5 18.5 L24 14"/>
+        </g>
+      </svg>
+      <span>Haydn McIntyre</span>
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="#about">About</a>
+      <a href="#work">Work</a>
+      <a href="#toolkit">Toolkit</a>
+      <a class="nav-cta" href="#contact">Contact</a>
+    </nav>
+    <button class="menu-toggle" aria-expanded="false" aria-controls="mobile-nav" aria-label="Open menu">
+      <span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav" id="mobile-nav" aria-label="Main (mobile)" hidden>
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#toolkit">Toolkit</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
+
+<main id="main">
+
+  <!-- Hero -->
+  <section class="hero" id="top">
+    <div class="hero-glow" aria-hidden="true"><span></span><span></span><span></span></div>
+    <canvas class="hero-canvas" id="hero-canvas" aria-hidden="true"></canvas>
+    <div class="wrap hero-inner">
+      <p class="hero-eyebrow rise" style="--d:0ms">Full stack developer</p>
+      <h1 class="hero-title">
+        <span class="rise" style="--d:80ms">Haydn</span>
+        <span class="rise accent" style="--d:170ms">McIntyre</span>
+      </h1>
+      <p class="hero-sub rise" style="--d:280ms">
+        <span>Websites</span><em>&middot;</em><span>Web apps</span><em>&middot;</em><span>Mobile &amp; desktop software</span>
+      </p>
+      <div class="hero-actions rise" style="--d:370ms">
+        <a class="btn btn-primary" href="#work">See the work</a>
+        <a class="btn btn-ghost" href="#contact">Contact me</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section class="section" id="about">
+    <div class="wrap about">
+      <div class="about-main reveal">
+        <p class="eyebrow">About</p>
+        <h2 class="h2">Hello.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+        <p class="about-lede">
+          I'm Haydn. I graduated from Niagara College in 2026 with a three-year
+          advanced diploma in Computer Programming and Analysis &mdash; software
+          development, databases, web and mobile.
+        </p>
+        <p class="about-lede">
+          I make fully customized websites &mdash; built around what a business
+          actually does, never picked off a shelf and recoloured. I like taking a
+          thing end to end: working out what it needs to do, designing it,
+          building it, and getting it running properly.
+        </p>
+      </div>
+      <dl class="facts reveal">
+        <div><dt>Graduated</dt><dd>Computer Programming &amp; Analysis <span>Niagara College, 2026</span></dd></div>
+        <div><dt>Based in</dt><dd>Niagara, Ontario</dd></div>
+        <div><dt>Building with</dt><dd>HTML, CSS &amp; JavaScript, C# &amp; .NET, SQL</dd></div>
+        <div><dt>Code</dt><dd><a class="fact-link" href="https://github.com/HaydnM17" rel="noopener">github.com/HaydnM17</a></dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- Work -->
+  <section class="section section-tint" id="work">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">The work</p>
+        <h2 class="h2">Things I've built.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+      </div>
+
+      <article class="project reveal">
+        <div class="project-media">
+          <button type="button" class="zoom" aria-label="View larger: Movement Unlimited sign-in screen">
+            <img src="assets/work/movement-unlimited.png" alt="Movement Unlimited staff portal sign-in screen." loading="lazy" width="940" height="760">
+          </button>
+        </div>
+        <div class="project-body">
+          <p class="project-meta">Web application &middot; Project lead</p>
+          <h3 class="project-title">Movement Unlimited</h3>
+          <p class="project-desc">
+            A staff portal for a pilates studio &mdash; sessions, clients and accounts
+            in one place. Razor front end, ASP.NET Core with Identity handling
+            sign-in and roles, Entity Framework over SQL Server behind it, the
+            whole thing deployed to Azure. I led a team of five at Niagara College.
+          </p>
+          <ul class="tags">
+            <li>ASP.NET Core</li><li>C#</li><li>Entity Framework</li><li>SQL Server</li><li>Azure</li>
+          </ul>
+          <a class="repo" href="https://github.com/HaydnM17/movement-unlimited-demo" rel="noopener">
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+            </svg>
+            <span>View the repo</span>
+          </a>
+        </div>
+      </article>
+
+      <article class="project project-alt reveal">
+        <div class="project-media project-media-shots">
+          <button type="button" class="zoom" aria-label="View larger: Workout Tracker home screen">
+            <img src="assets/work/workout-home.png" alt="Workout Tracker home screen with logged workouts and templates." loading="lazy" width="448" height="988">
+          </button>
+          <button type="button" class="zoom" aria-label="View larger: live workout session">
+            <img src="assets/work/workout-session.png" alt="A live workout in progress with a running timer and editable sets." loading="lazy" width="444" height="987">
+          </button>
+          <button type="button" class="zoom" aria-label="View larger: statistics screen">
+            <img src="assets/work/workout-stats.png" alt="Statistics screen showing workout totals over time." loading="lazy" width="448" height="988">
+          </button>
+        </div>
+        <div class="project-body">
+          <p class="project-meta">Mobile &amp; desktop &middot; Solo build</p>
+          <h3 class="project-title">Workout Tracker</h3>
+          <p class="project-desc">
+            Plan a workout, log it live, watch the numbers move. Runs fully offline
+            on Android and Windows. Designed, built and documented on my own.
+          </p>
+          <ul class="tags">
+            <li>.NET MAUI</li><li>C#</li><li>SQLite</li><li>MVVM</li>
+          </ul>
+          <a class="repo" href="https://github.com/HaydnM17/WorkoutApp" rel="noopener">
+            <svg viewBox="0 0 16 16" width="15" height="15" aria-hidden="true" focusable="false">
+              <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+            </svg>
+            <span>View the repo</span>
+          </a>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- Toolkit -->
+  <section class="section" id="toolkit">
+    <div class="wrap">
+      <div class="section-head reveal">
+        <p class="eyebrow">Toolkit</p>
+        <h2 class="h2">The whole stack.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+      </div>
+      <div class="layers">
+        <article class="layer reveal" style="--d:0ms" tabindex="0">
+          <div class="layer-head"><span class="layer-n">01</span><h3>Interface</h3></div>
+          <p class="layer-note">What people see and touch. Laid out for a phone first, because that is where most of your customers are standing.</p>
+          <ul class="layer-tech">
+            <li>HTML</li><li>CSS</li><li>JavaScript</li><li>Responsive layout</li><li>Accessibility</li>
+          </ul>
+        </article>
+        <article class="layer reveal" style="--d:80ms" tabindex="0">
+          <div class="layer-head"><span class="layer-n">02</span><h3>Application</h3></div>
+          <p class="layer-note">The logic underneath. Routing, sign-in, permissions, and the rules the business actually runs on.</p>
+          <ul class="layer-tech">
+            <li>C#</li><li>ASP.NET Core</li><li>.NET MAUI</li><li>MVVM</li><li>APIs</li>
+          </ul>
+        </article>
+        <article class="layer reveal" style="--d:160ms" tabindex="0">
+          <div class="layer-head"><span class="layer-n">03</span><h3>Data</h3></div>
+          <p class="layer-note">Where it all lives. Schemas designed up front, migrations that do not lose anything, queries that stay quick as the table grows.</p>
+          <ul class="layer-tech">
+            <li>SQL Server</li><li>SQLite</li><li>Entity Framework</li><li>Database design</li>
+          </ul>
+        </article>
+        <article class="layer reveal" style="--d:240ms" tabindex="0">
+          <div class="layer-head"><span class="layer-n">04</span><h3>Delivery</h3></div>
+          <p class="layer-note">Getting it live and keeping it that way. Hosting, deployment, version control, and the handover so it is yours.</p>
+          <ul class="layer-tech">
+            <li>Azure</li><li>Git</li><li>Static hosting</li><li>Domains &amp; HTTPS</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- Contact -->
+  <section class="section section-tint" id="contact">
+    <div class="wrap contact">
+      <div class="contact-intro reveal">
+        <p class="eyebrow">Contact</p>
+        <h2 class="h2">Get in touch.</h2>
+        <div class="bolt-rule" aria-hidden="true">
+          <svg viewBox="0 0 124 18"><polyline pathLength="1" points="1,13 42,13 54,4 62,14 74,5 123,5"/></svg>
+        </div>
+        <p class="about-lede">
+          Have a project in mind? Send me the details and I'll take a look.
+        </p>
+      </div>
+
+      <form class="form reveal" id="enquiry" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+        <div class="field">
+          <label for="f-name">Name</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required>
+          <p class="err" data-for="f-name" hidden>Please tell me what to call you.</p>
+        </div>
+        <div class="field">
+          <label for="f-email">Email</label>
+          <input id="f-email" name="email" type="email" autocomplete="email" required>
+          <p class="err" data-for="f-email" hidden>That address does not look right.</p>
+        </div>
+        <div class="field">
+          <label for="f-msg">Message</label>
+          <textarea id="f-msg" name="message" rows="4" required></textarea>
+          <p class="err" data-for="f-msg" hidden>A sentence or two is enough.</p>
+        </div>
+        <button class="btn btn-primary btn-submit" type="submit">Send it</button>
+        <p class="form-note" id="form-status" role="status"></p>
+        <p class="form-alt">
+          Or reach me <a href="#contact" data-mail>by email</a> &mdash;
+          code's on <a href="https://github.com/HaydnM17" rel="noopener">GitHub</a>.
+        </p>
+      </form>
+    </div>
+  </section>
+
+</main>
+
+<dialog class="lightbox" id="lightbox" aria-label="Image viewer">
+  <div class="lightbox-inner">
+    <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Close image">
+      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true" focusable="false">
+        <path d="M5 5 L19 19 M19 5 L5 19" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+      </svg>
+    </button>
+    <img id="lightbox-img" src="" alt="">
+  </div>
+</dialog>
+
+<footer class="footer">
+  <div class="wrap footer-inner">
+    <p class="footer-mark">Haydn McIntyre</p>
+    <a class="footer-gh" href="https://github.com/HaydnM17" rel="noopener">
+      <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+        <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.4 7.4 0 0 1 2-.27c.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/>
+      </svg>
+      GitHub
+    </a>
+    <p class="footer-legal">&copy; <span id="year">2026</span> Haydn McIntyre</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
