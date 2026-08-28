@@ -750,3 +750,21 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .drop-menu a::after { content: none; }
 @media (prefers-reduced-motion: reduce) { .drop-menu { transition: none; } }
 .mobile-nav a.sub { padding-left: calc(var(--gutter) + 1.1rem); font-size: var(--fs-sm); color: var(--dim); }
+
+/* --- Cursor light in the hero ---------------------------------------------
+   Sits above the readability scrim but below the type, so it genuinely
+   lifts the dark left side instead of being crushed by the gradient. */
+.hero-cursor {
+  position: absolute; inset: 0; z-index: 1;
+  pointer-events: none;
+  background:
+    radial-gradient(300px circle at var(--cx, -300px) var(--cy, -300px),
+      rgba(63, 217, 192, 0.40), transparent 70%),
+    radial-gradient(620px circle at var(--cx, -300px) var(--cy, -300px),
+      rgba(28, 95, 74, 0.62), transparent 72%);
+  opacity: 0;
+  transition: opacity 0.45s var(--ease);
+  mix-blend-mode: screen;
+}
+.hero-cursor.on { opacity: 1; }
+@media (prefers-reduced-motion: reduce) { .hero-cursor { display: none; } }

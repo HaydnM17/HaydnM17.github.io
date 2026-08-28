@@ -261,6 +261,8 @@
        The canvas is pointer-events:none so it never eats clicks, so track on
        the window and translate into canvas space. */
     if (!reduceMotion) {
+      var glow = document.getElementById("hero-cursor");
+
       var track = function (e) {
         var rect = canvas.getBoundingClientRect();
         var x = e.clientX - rect.left;
@@ -269,6 +271,11 @@
         cursor.on = x > -pad && x < rect.width + pad && y > -pad && y < rect.height + pad;
         cursor.x = x;
         cursor.y = y;
+        if (glow) {
+          glow.style.setProperty("--cx", x + "px");
+          glow.style.setProperty("--cy", y + "px");
+          glow.classList.toggle("on", cursor.on);
+        }
       };
 
       window.addEventListener("pointermove", track, { passive: true });
@@ -278,9 +285,15 @@
         if (e.pointerType === "touch") cursor.on = false;
       }, { passive: true });
       window.addEventListener("pointercancel", function () { cursor.on = false; }, { passive: true });
-      document.addEventListener("pointerleave", function () { cursor.on = false; });
+      document.addEventListener("pointerleave", function () {
+        cursor.on = false;
+        if (glow) glow.classList.remove("on");
+      });
       /* the hero scrolls out from under the pointer as often as the other way */
-      window.addEventListener("scroll", function () { cursor.on = false; }, { passive: true });
+      window.addEventListener("scroll", function () {
+        cursor.on = false;
+        if (glow) glow.classList.remove("on");
+      }, { passive: true });
     }
 
     var resizeTimer;
