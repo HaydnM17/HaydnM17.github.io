@@ -133,7 +133,7 @@ a { color: inherit; }
   font-variation-settings: "wdth" 105;
 }
 .mark-glyph {
-  width: 26px; height: 26px; flex: none;
+  width: auto; height: 23px; flex: none;
   color: var(--brass);
   transition: color 0.25s var(--ease);
 }
@@ -609,7 +609,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .project { position: relative; }
 .project::before, .layer::before {
   content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%),
+  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
               rgba(229, 180, 87, 0.07), transparent 68%);
   opacity: 0; transition: opacity 0.35s var(--ease);
 }
@@ -758,10 +758,10 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   position: absolute; inset: 0; z-index: 1;
   pointer-events: none;
   background:
-    radial-gradient(300px circle at var(--cx, -300px) var(--cy, -300px),
-      rgba(63, 217, 192, 0.40), transparent 70%),
-    radial-gradient(620px circle at var(--cx, -300px) var(--cy, -300px),
-      rgba(28, 95, 74, 0.62), transparent 72%);
+    radial-gradient(240px circle at var(--cx, -300px) var(--cy, -300px),
+      rgba(63, 217, 192, 0.13), transparent 70%),
+    radial-gradient(480px circle at var(--cx, -300px) var(--cy, -300px),
+      rgba(28, 95, 74, 0.22), transparent 72%);
   opacity: 0;
   transition: opacity 0.45s var(--ease);
   mix-blend-mode: screen;
