@@ -399,8 +399,10 @@
     if (!rail || !("IntersectionObserver" in window)) return;
 
     var links = Array.prototype.slice.call(rail.querySelectorAll("a"));
+    /* nav links carry data-sec so Home and Portfolio can highlight too,
+       not just the ones whose href is a hash on this page */
     var navLinks = Array.prototype.slice.call(
-      document.querySelectorAll(".nav a:not(.nav-cta)")
+      document.querySelectorAll(".nav a[data-sec]")
     );
 
     var setActive = function (id) {
@@ -408,7 +410,7 @@
         a.classList.toggle("is-active", a.getAttribute("data-sec") === id);
       });
       navLinks.forEach(function (a) {
-        a.classList.toggle("is-current", a.getAttribute("href") === "#" + id);
+        a.classList.toggle("is-current", a.getAttribute("data-sec") === id);
       });
     };
 
