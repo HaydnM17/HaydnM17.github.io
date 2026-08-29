@@ -1,83 +1,51 @@
-# Haydn McIntyre — personal site
+# haydnmcintyre.ca
 
-A single-page personal site. Dark, animated, and short on words on purpose:
-hero, work, toolkit, about, contact.
+Personal site and portfolio for Haydn McIntyre. Two pages: a home page about the
+websites I build, and a portfolio page with the projects behind it.
 
-Contact address is `haydnmcintyre@yahoo.ca`. It is never written into the
-markup — `script.js` assembles it at runtime and fills in any element marked
-`data-mail`, so scrapers reading the raw HTML come up empty. If you change the
-address, change it in the `mailUser` / `mailHost` lines at the top of
-`script.js` and nowhere else.
+Plain HTML, CSS and JavaScript. No framework, no build step, no dependencies.
 
 ## Files
 
-| File | What it is |
+| | |
 | --- | --- |
-| `index.html` | The whole site. |
-| `styles.css` | All styling. Design tokens sit at the top. |
-| `script.js` | Sticky nav, mobile menu, scroll reveals, form handling. |
-| `assets/work/` | Project screenshots. |
-| `build-standalone.sh` | Bundles everything into one file in `dist/`. |
-| `dist/` | Generated. Safe to delete and rebuild. |
+| `index.html` | Home: hero, portfolio preview, about, services, contact |
+| `portfolio.html` | Projects in detail, plus technical skills |
+| `styles.css` | All styling. Design tokens are at the top of the file |
+| `script.js` | Hero canvas, nav, lightbox, scroll reveals, contact form |
+| `assets/work/` | Project screenshots |
+| `build-standalone.sh` | Optional: bundles the home page into one self-contained file |
 
-## Before it goes live
+## Running it
 
-### Wire up the contact form
+Open `index.html` in a browser. There is nothing to install and nothing to
+compile.
 
-The form currently has no backend, so it falls back to opening the visitor's
-email app with the message pre-filled. That works, but a real form converts
-better.
+## Deploying
 
-1. Create a free form at [formspree.io](https://formspree.io).
-2. Copy the endpoint it gives you (`https://formspree.io/f/abcdwxyz`).
-3. Replace `YOUR_FORM_ID` in the form's `action` in `index.html`.
-
-The script detects the swap and starts posting to the real endpoint.
-
-### Add work as it lands
-
-Each project is one `<article class="project">` block in the Work section:
-screenshot, meta line, title, one short paragraph, and tags. Copy an existing
-block and swap the contents. Add `project-alt` to the class list to flip which
-side the image sits on — they should alternate down the page.
-
-Keep descriptions to two or three sentences. The section works because it is
-short.
-
-### Movement Unlimited screenshot
-
-The Azure demo this project was deployed to is gone (the DNS no longer
-resolves), so the screenshot in `assets/work/` was captured by running the app
-locally. If you redeploy it, link the live URL from the project title.
-
-## Publishing it
-
-Plain HTML, CSS, and JS with no build step, so any free static host works.
-Upload the folder (minus `dist/`) and point your domain at it.
-
-- **Cloudflare Pages** or **Netlify** — drag the folder onto their dashboard.
-- **GitHub Pages** — push to a repo, enable Pages in settings.
-
-All three give free HTTPS.
-
-## The single-file version
+Cloudflare Pages builds from `main` automatically:
 
 ```bash
-bash build-standalone.sh
+git add .
+git commit -m "what changed"
+git push
 ```
 
-Writes `dist/haydn-site.html` with the CSS, JavaScript, and images inlined —
-one file you can email to someone or open from a USB stick.
+Live about a minute later. Build command is empty and the output directory is
+the repository root.
 
-## Design notes
+## Notes
 
-Dark by design: a green-black ground, a brass accent, and Archivo set wide
-(`wdth 122`) for the display type. There is no light theme — the page commits to
-one look and paints every colour explicitly.
+**The contact form has no backend.** It currently opens the visitor's email app
+with the message filled in. To make it submit properly, create a form at
+[formspree.io](https://formspree.io) and replace `YOUR_FORM_ID` in the form's
+`action` in `index.html`. The script detects the change and posts to it instead.
 
-Change `--brass` and `--green` at the top of `styles.css` and the whole site
-follows.
+**The email address is never in the markup.** `script.js` assembles it at
+runtime and fills any element marked `data-mail`, so scrapers reading the raw
+HTML find nothing. To change it, edit the `mailUser` and `mailHost` lines at the
+top of `script.js`.
 
-Animation is deliberate and limited: a staggered load-in on the hero, one
-scrolling marquee, scroll reveals, and hover states on cards and links. All of
-it is disabled automatically for visitors who have reduced motion turned on.
+**Adding a project.** Copy an `<article class="project">` block in
+`portfolio.html` and swap the contents. Add `project-alt` to the class list to
+flip which side the image sits on, so they alternate down the page.
