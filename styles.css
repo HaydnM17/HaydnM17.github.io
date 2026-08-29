@@ -790,3 +790,12 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .page-links a:hover { color: var(--brass); border-color: var(--brass); }
 /* image runs edge to edge; only the labels are inset */
 .teaser-meta, .teaser-name { padding-inline: 1.25rem; }
+
+/* --- Multi-shot project media (landscape screens) ------------------------- */
+.project-media-set {
+  display: grid; gap: 0.6rem;
+  background: none; overflow: visible;
+}
+@media (min-width: 520px) { .project-media-set { grid-template-columns: 1fr 1fr; } }
+.project-media-set .wide { grid-column: 1 / -1; }
+.project-media-set img { border: 1px solid var(--line); width: 100%; }
