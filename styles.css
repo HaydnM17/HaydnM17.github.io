@@ -660,13 +660,13 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .teaser-grid { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); margin-bottom: 2.5rem; }
 @media (min-width: 700px) { .teaser-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .teaser {
-  display: grid; gap: 0.4rem; align-content: start;
-  padding: 1.25rem; background: var(--ground); text-decoration: none;
+  display: grid; gap: 0.35rem; align-content: start;
+  padding: 0 0 1.35rem; background: var(--ground); text-decoration: none;
   transition: background 0.3s var(--ease);
 }
 .teaser:hover { background: var(--card); }
-.teaser-shot { display: block; overflow: hidden; background: var(--card); margin-bottom: 0.8rem; aspect-ratio: 4 / 3; }
-.teaser-shot img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform 0.6s var(--ease); }
+.teaser-shot { display: block; overflow: hidden; background: var(--card); margin-bottom: 1.1rem; aspect-ratio: 16 / 10; }
+.teaser-shot img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 15%; transition: transform 0.6s var(--ease); }
 .teaser:hover .teaser-shot img { transform: scale(1.04); }
 .teaser-meta {
   font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.14em;
@@ -789,3 +789,5 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   transition: color 0.25s var(--ease), border-color 0.25s var(--ease);
 }
 .page-links a:hover { color: var(--brass); border-color: var(--brass); }
+/* image runs edge to edge; only the labels are inset */
+.teaser-meta, .teaser-name { padding-inline: 1.25rem; }
