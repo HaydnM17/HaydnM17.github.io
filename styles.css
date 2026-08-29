@@ -749,7 +749,6 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .drop-menu a:hover, .drop-menu a:focus-visible { background: var(--card); color: var(--brass); }
 .drop-menu a::after { content: none; }
 @media (prefers-reduced-motion: reduce) { .drop-menu { transition: none; } }
-.mobile-nav a.sub { padding-left: calc(var(--gutter) + 1.1rem); font-size: var(--fs-sm); color: var(--dim); }
 
 /* --- Cursor light in the hero ---------------------------------------------
    Sits above the readability scrim but below the type, so it genuinely
