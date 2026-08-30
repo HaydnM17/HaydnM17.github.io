@@ -1,10 +1,10 @@
-# Generated single-file build — rebuild it any time with build-standalone.sh
+# Generated single-file build, rebuild it any time with build-standalone.sh
 dist/
 
 # Visual Studio
 .vs/
 
-# Local Claude Code settings — machine specific, not part of the site
+# Local Claude Code settings, machine specific and not part of the site
 .claude/
 
 # OS junk

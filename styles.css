@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Haydn McIntyre — personal site
+   Haydn McIntyre personal site
    Dark by design: green-black ground, brass accent, wide Archivo lettering.
    ========================================================================== */
 
@@ -9,14 +9,14 @@
   --card:      #131E1A;
   --chalk:     #ECF1EC;
   --dim:       #93A79A;   /* 7.53:1 on ground */
-  --faint:     #6F8276;   /* 4.69:1 — the old #64766B measured 3.97:1 and failed */
+  --faint:     #6F8276;   /* 4.69:1. The old #64766B measured 3.97:1 and failed */
   --green:     #1C5F4A;
-  --electric:  #3FD9C0;   /* hero effect only — brass stays the brand accent */
+  --electric:  #3FD9C0;   /* hero effect only. Brass stays the brand accent */
   --brass:     #E5B457;
   --brass-dim: #B98C33;
   --line:      rgba(236, 241, 236, 0.11);
-  --line-2:    rgba(236, 241, 236, 0.22);   /* decorative only — 1.73:1 */
-  --line-int:  rgba(236, 241, 236, 0.38);   /* anything interactive — 3.05:1 */
+  --line-2:    rgba(236, 241, 236, 0.22);   /* decorative only, 1.73:1 */
+  --line-int:  rgba(236, 241, 236, 0.38);   /* anything interactive, 3.05:1 */
   --danger:    #F08C7A;
 
   --wrap: 1180px;
@@ -199,7 +199,7 @@ a { color: inherit; }
   border-radius: 50%;
   will-change: transform;
 }
-/* weighted to the right — the headline lives on the left and needs a calm ground */
+/* weighted to the right. The headline lives on the left and needs a calm ground */
 .hero-glow span:nth-child(1) {
   width: 50vw; height: 50vw; min-width: 380px; min-height: 380px;
   top: 4%; left: 46%;
@@ -504,7 +504,7 @@ body.is-locked { overflow: hidden; }
 .field input[aria-invalid="true"], .field textarea[aria-invalid="true"] { border-color: var(--danger); }
 .err { font-size: var(--fs-sm); color: var(--danger); }
 .btn-submit { justify-self: start; margin-top: 0.35rem; }
-/* full width on a phone — an easier target, and it looks intentional */
+/* full width on a phone, an easier target and it looks intentional */
 @media (max-width: 520px) {
   .btn-submit { justify-self: stretch; text-align: center; }
 }
@@ -576,7 +576,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   transform: scaleX(0); transform-origin: 0 50%;
 }
 
-/* Section rail — only where there is margin to spare beside the content */
+/* Section rail, only where there is margin to spare beside the content */
 .rail { display: none; }
 @media (min-width: 1360px) {
   .rail {

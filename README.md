@@ -13,6 +13,7 @@ Plain HTML, CSS and JavaScript. No framework, no build step, no dependencies.
 | `portfolio.html` | Projects in detail, plus technical skills |
 | `styles.css` | All styling. Design tokens are at the top of the file |
 | `script.js` | Hero canvas, nav, lightbox, scroll reveals, contact form |
+| `functions/api/contact.js` | Contact form endpoint, deployed by Cloudflare Pages |
 | `assets/work/` | Project screenshots |
 | `build-standalone.sh` | Optional: bundles the home page into one self-contained file |
 
@@ -36,10 +37,15 @@ the repository root.
 
 ## Notes
 
-**The contact form has no backend.** It currently opens the visitor's email app
-with the message filled in. To make it submit properly, create a form at
-[formspree.io](https://formspree.io) and replace `YOUR_FORM_ID` in the form's
-`action` in `index.html`. The script detects the change and posts to it instead.
+**The contact form posts to `/api/contact`,** which is
+`functions/api/contact.js` in this repository. Cloudflare Pages turns anything
+under `functions/` into a live endpoint at deploy time, so there is still no
+build step. It mails the message through Cloudflare's own sending API, which is
+free when the recipient is a verified Email Routing destination on the same
+account. It is switched on with four environment variables on the Pages project,
+listed in the comment at the top of the file. Until they are set the endpoint
+answers 501 and the form falls back to opening the visitor's mail app, so it is
+never a dead end and nothing has to be configured for the site to ship.
 
 **The email address is never in the markup.** `script.js` assembles it at
 runtime and fills any element marked `data-mail`, so scrapers reading the raw

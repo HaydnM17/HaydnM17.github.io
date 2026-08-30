@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Haydn McIntyre — Full Stack Developer</title>
-<meta name="description" content="Haydn McIntyre — full stack developer. Fully customized websites, web apps, and the software behind them.">
+<title>Haydn McIntyre, Full Stack Developer</title>
+<meta name="description" content="Haydn McIntyre, full stack developer. Fully customized websites, web apps, and the software behind them.">
 <meta name="theme-color" content="#0A100E">
-<meta property="og:title" content="Haydn McIntyre — Full Stack Developer">
+<meta property="og:title" content="Haydn McIntyre, Full Stack Developer">
 <meta property="og:description" content="Fully customized websites, web apps, and the software behind them.">
 <meta property="og:url" content="https://haydnmcintyre.ca/">
 <meta property="og:type" content="website">
@@ -214,7 +214,7 @@
         </p>
       </div>
 
-      <form class="form reveal" id="enquiry" action="https://formspree.io/f/YOUR_FORM_ID" method="POST" novalidate>
+      <form class="form reveal" id="enquiry" action="/api/contact" method="POST" novalidate>
         <div class="field">
           <label for="f-name">Name</label>
           <input id="f-name" name="name" type="text" autocomplete="name" required>
@@ -230,6 +230,7 @@
           <textarea id="f-msg" name="message" rows="4" required></textarea>
           <p class="err" data-for="f-msg" hidden>Enter a message.</p>
         </div>
+        <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" aria-hidden="true" hidden>
         <button class="btn btn-primary btn-submit" type="submit">Send it</button>
         <p class="form-note" id="form-status" role="status"></p>
         <p class="form-alt">

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Builds dist/haydn-site.html — the whole site as ONE file with the CSS, JS and
+# Builds dist/haydn-site.html, the whole site as ONE file with the CSS, JS and
 # images inlined. Useful for previewing, emailing, or publishing as an artifact.
 # Run from the project root:  bash build-standalone.sh
 set -euo pipefail

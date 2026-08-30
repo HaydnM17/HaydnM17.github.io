@@ -1,4 +1,4 @@
-/* Haydn McIntyre — site behaviour. No dependencies. */
+/* Haydn McIntyre site behaviour. No dependencies. */
 (function () {
   "use strict";
 
@@ -245,7 +245,7 @@
 
       window.addEventListener("pointermove", track, { passive: true });
       window.addEventListener("pointerdown", track, { passive: true });
-      /* only a finger lifting ends it — a mouse click should not */
+      /* only a finger lifting ends it, a mouse click should not */
       window.addEventListener("pointerup", function (e) {
         if (e.pointerType === "touch") clear();
       }, { passive: true });
@@ -495,6 +495,25 @@
     else status.removeAttribute("data-state");
   };
 
+  /* Used by the spam trap in the endpoint: a real person cannot fill this in
+     and submit within two seconds of the page loading. */
+  var openedAt = Date.now();
+
+  /* Last resort when the endpoint is missing or unreachable. The message the
+     visitor typed is never thrown away, it just goes out through their own
+     mail app instead. */
+  var handOffToMailApp = function (data, note) {
+    var body =
+      "Name: " + data.name + "\n" +
+      "Email: " + data.email + "\n\n" +
+      data.message;
+    window.location.href =
+      "mailto:" + EMAIL +
+      "?subject=" + encodeURIComponent("Message from " + data.name) +
+      "&body=" + encodeURIComponent(body);
+    setStatus(note || "Opening your email app with the message ready to send.");
+  };
+
   form.addEventListener("submit", function (e) {
     e.preventDefault();
     if (!validate()) {
@@ -502,33 +521,39 @@
       return;
     }
 
-    var data = new FormData(form);
-
-    /* No form service wired up yet — hand it to their mail app instead. */
-    if (form.action.indexOf("YOUR_FORM_ID") !== -1) {
-      var body =
-        "Name: " + data.get("name") + "\n" +
-        "Email: " + data.get("email") + "\n\n" +
-        data.get("message");
-      window.location.href =
-        "mailto:" + EMAIL +
-        "?subject=" + encodeURIComponent("Message from " + data.get("name")) +
-        "&body=" + encodeURIComponent(body);
-      setStatus("Opening your email app with the message ready to send.");
-      return;
-    }
+    var fields = new FormData(form);
+    var data = {
+      name: String(fields.get("name") || "").trim(),
+      email: String(fields.get("email") || "").trim(),
+      message: String(fields.get("message") || "").trim(),
+      _gotcha: fields.get("_gotcha") || "",
+      _t: openedAt
+    };
 
     submit.disabled = true;
     setStatus("Sending...");
 
-    fetch(form.action, { method: "POST", body: data, headers: { Accept: "application/json" } })
+    fetch(form.action, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(data)
+    })
       .then(function (res) {
-        if (!res.ok) throw new Error("Request failed");
-        form.reset();
-        setStatus("Sent. Thanks — I'll get back to you.", "ok");
+        if (res.ok) {
+          form.reset();
+          setStatus("Sent. Thanks, I will get back to you.", "ok");
+          return;
+        }
+        /* 501 means the endpoint is live but no mail provider is configured. */
+        if (res.status === 501) {
+          handOffToMailApp(data);
+          return;
+        }
+        setStatus("That did not send. You can email me instead.", "bad");
       })
       .catch(function () {
-        setStatus("That did not send. You can email me instead.", "bad");
+        /* No endpoint at all: opened as a local file, or the network is down. */
+        handOffToMailApp(data, "Could not reach the server. Opening your email app instead.");
       })
       .finally(function () {
         submit.disabled = false;

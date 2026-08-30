@@ -8,7 +8,9 @@ Two pages: `index.html` (home) and `portfolio.html`.
 ## Deploying
 
 Cloudflare Pages builds from `main` on every push. Build command is empty and the
-output directory is the repo root.
+output directory is the repo root. Anything under `functions/` is compiled into
+a Worker at deploy time and served at the matching path, so `/api/contact` comes
+from `functions/api/contact.js`. Still no build step and still no npm.
 
 ```bash
 git add . && git commit -m "what changed" && git push
@@ -75,9 +77,13 @@ These came from direct feedback. Do not reintroduce them.
 
 ## Known gaps
 
-- **The contact form has no backend.** It opens the visitor's mail app. To make
-  it submit, create a form at formspree.io and replace `YOUR_FORM_ID` in the
-  `action` in `index.html`. The script detects the change automatically.
+- **The contact form's mail is optional and currently off.** The backend exists
+  (`functions/api/contact.js`, served at `/api/contact`). Until `CONTACT_TO`,
+  `CONTACT_FROM`, `CF_ACCOUNT_ID` and `CF_EMAIL_TOKEN` are set on the Pages
+  project it answers 501 and the form falls back to opening the visitor's mail
+  app. That fallback is the deliberate default for client sites, so a site can
+  ship with nobody having configured anything. Check the state with
+  `curl -s https://haydnmcintyre.ca/api/contact`.
 - **`assets/work/this-site.png` is ~1.6 MB.** Converting it to WebP would cut it
   by roughly 90% with no visible loss.
 - GitHub Pages may still be enabled on the repo, serving a duplicate of the site.
