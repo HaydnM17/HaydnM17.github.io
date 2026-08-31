@@ -18,6 +18,7 @@
   --line-2:    rgba(236, 241, 236, 0.22);   /* decorative only, 1.73:1 */
   --line-int:  rgba(236, 241, 236, 0.38);   /* anything interactive, 3.05:1 */
   --danger:    #F08C7A;
+  --success:   #57C9A2;   /* 8.85:1 on raised. A tint of --green, not --electric */
 
   --wrap: 1180px;
   --gutter: clamp(1.25rem, 4vw, 3rem);
@@ -509,7 +510,7 @@ body.is-locked { overflow: hidden; }
   .btn-submit { justify-self: stretch; text-align: center; }
 }
 .form-note { font-size: var(--fs-sm); color: var(--dim); min-height: 1.25rem; }
-.form-note[data-state="ok"] { color: var(--brass); font-weight: 600; }
+.form-note[data-state="ok"] { color: var(--success); font-weight: 600; }
 .form-note[data-state="bad"] { color: var(--danger); }
 .form-alt { font-size: var(--fs-sm); color: var(--faint); }
 .form-alt a {

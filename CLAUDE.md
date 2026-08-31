@@ -73,7 +73,14 @@ These came from direct feedback. Do not reintroduce them.
 - No pricing, no free-work offers, no "I reply within a day".
 - No scrolling marquee or ticker.
 - Headings do not end in a period.
-- Home page sells websites. Deeper technical detail belongs on the portfolio page.
+- Home page sells all three things he builds: websites, web applications and
+  mobile apps. Deeper technical detail belongs on the portfolio page.
+- The bio says he graduated from Niagara College in 2026 and stops there. Do not
+  reintroduce "three-year advanced diploma". The program name stays in the facts
+  list beside it.
+- Gold (`btn-primary`, `nav-cta`) means Contact wherever it is a navigation
+  choice. Section CTAs like "See the full portfolio" and the form's own submit
+  button keep it as the primary action of that section.
 
 ## Known gaps
 

@@ -55,9 +55,10 @@
   }
 
   /* ---- Hero particle web -------------------------------------------------
-     Drifting dots that lean toward the pointer. Straight hairlines link the
-     ones near it, so the web forms around the cursor and fades away behind it
-     instead of hanging over the whole hero like a cobweb. */
+     Drifting dots that circle the pointer rather than being drawn into it.
+     Straight hairlines link the ones near it, so the web forms around the
+     cursor and fades away behind it instead of hanging over the whole hero
+     like a cobweb. */
   (function () {
     var canvas = document.getElementById("hero-canvas");
     if (!canvas || !canvas.getContext) return;
@@ -68,7 +69,7 @@
     var dots = [];
 
     var REACH = 240;   // how far the pointer's influence carries
-    var PULL = 150;    // px/s² of lean toward the pointer
+    var SWIRL = 165;   // px/s² of rotation around the pointer
     var LINK = 118;    // two dots closer than this can be linked
     var SPOKE = 155;   // dots closer than this link to the pointer itself
 
@@ -123,10 +124,12 @@
           d = Math.sqrt(dx * dx + dy * dy);
           if (d < REACH && d > 0.001) {
             target = 1 - d / REACH;
-            /* ease off at the very centre so nothing piles onto the pointer */
-            var force = PULL * target * Math.min(d / 45, 1);
-            a.ivx += (dx / d) * force * dt;
-            a.ivy += (dy / d) * force * dt;
+            /* Perpendicular to the line joining dot and pointer, so the push is
+               sideways and never inward. The taper keeps the ones closest to
+               the centre from whipping round at silly speed. */
+            var force = SWIRL * target * Math.min(d / 45, 1);
+            a.ivx += (-dy / d) * force * dt;
+            a.ivy += (dx / d) * force * dt;
           }
         }
         a.lit += (target - a.lit) * Math.min(dt * 5, 1);
