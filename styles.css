@@ -175,7 +175,6 @@ a { color: inherit; }
   min-height: min(88vh, 780px);
   display: grid; align-items: center;
   padding-block: clamp(3.5rem, 10vw, 7rem) clamp(3.5rem, 9vw, 7rem);
-  border-bottom: 1px solid var(--line);
   overflow: hidden;
 }
 /* Layer 1: slow gradient wash. Three blurred blobs drifting on their own clocks. */
@@ -277,7 +276,9 @@ a { color: inherit; }
 
 /* --- Sections ------------------------------------------------------------- */
 .section { padding-block: var(--section-y); }
-.section-tint { background: var(--raised); border-block: 1px solid var(--line); }
+/* No border. The change in ground is the edge now that the bands alternate,
+   and a hairline on top of it just read as a drawn line. */
+.section-tint { background: var(--raised); }
 .section-head { margin-bottom: clamp(2.5rem, 6vw, 4rem); }
 
 /* --- Projects ------------------------------------------------------------- */
@@ -381,6 +382,15 @@ body.is-locked { overflow: hidden; }
               background 0.25s var(--ease);
 }
 .repo svg { flex: none; }
+/* A live link sits beside the repo link. Client sites get the live one and
+   usually no repo, so the row has to read right with either or both. */
+.project-links {
+  display: flex; flex-wrap: wrap; gap: 0.7rem;
+  justify-self: start; margin-top: 0.7rem;
+}
+.project-links .repo { margin-top: 0; }
+.repo-live { border-color: var(--brass-dim); color: var(--brass); }
+.repo-live:hover { border-color: var(--brass); }
 .repo:hover { color: var(--brass); border-color: var(--brass); background: rgba(229, 180, 87, 0.07); }
 .repo span::after { content: " \2197"; }
 
@@ -677,11 +687,13 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 }
 .teaser-shot .device-browser { width: 100%; height: 100%; aspect-ratio: 16 / 10; }
 .teaser-shot-phone .device-phone { width: auto; height: 100%; aspect-ratio: 422 / 966; }
-/* A third of the row is not enough for a phone standing beside a browser, and
-   the browser is the one carrying the content. The pair stays intact on the
-   portfolio page, where it has the width for it. */
-.teaser-shot .reel-pair { gap: 0; }
-.teaser-shot .reel-pair .device-phone { display: none; }
+/* A pair inside a teaser: the phone takes the full height of the box and the
+   browser takes whatever width is left, so both fit a third of the row and
+   still sit on the same baseline. Sizing the browser by width instead would
+   push the phone out of the column. */
+.teaser-shot .reel-pair { width: 100%; height: 100%; gap: 4%; align-items: flex-end; }
+.teaser-shot .reel-pair .device-browser { flex: 1 1 auto; width: auto; height: auto; aspect-ratio: 16 / 10; }
+.teaser-shot .reel-pair .device-phone { flex: 0 0 auto; width: auto; height: 100%; aspect-ratio: 422 / 966; }
 .teaser-meta {
   font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--brass);
