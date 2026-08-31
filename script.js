@@ -594,14 +594,15 @@
    reads as the click that caused it. Frames with no cursor wait out the same
    interval rather than jumping ahead.
 
-   A frame only runs while it is on screen, and not at all under reduced
-   motion, where the first slide sits at the top as a plain screenshot. --- */
+   A frame only runs while it is on screen. Under reduced motion it still moves
+   between slides, because each one is a different screen and stopping on the
+   first would hide the rest, but it crossfades: no scrolling, no cursor. --- */
 (function () {
   var frames = document.querySelectorAll("[data-reel]");
   if (!frames.length) return;
 
+  if (!("IntersectionObserver" in window)) return;
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  if (reduced.matches || !("IntersectionObserver" in window)) return;
 
   /* One slide: settle, scroll the page, rest, then point and click. A page
      with nothing to scroll skips only the scroll. */
@@ -614,6 +615,10 @@
   var SCROLL_MIN = 0.25;
   var CURSOR_MOVE = 1000;
   var CLICK_HOLD = 620;
+  /* Reduced motion still moves between slides, because each one is a different
+     screen of the project and stopping on the first would hide the rest. It
+     crossfades instead: opacity only, no scrolling and no cursor. */
+  var REDUCED_HOLD = 5000;
 
   function Reel(frame) {
     this.frame = frame;
@@ -701,6 +706,11 @@
     }
     this.slides.forEach(function (s) { s.classList.toggle("is-live", s === slide); });
 
+    if (reduced.matches) {
+      this.wait(REDUCED_HOLD, function () { self.advance(); });
+      return;
+    }
+
     this.wait(HOLD_TOP, function () {
       if (distance > self.screen.clientHeight * SCROLL_MIN) {
         self.scroll(slide, distance, function () { self.rest(slide); });
@@ -710,14 +720,16 @@
     });
   };
 
+  Reel.prototype.advance = function () {
+    if (this.cursor) this.cursor.classList.remove("is-on");
+    this.index = (this.index + 1) % this.slides.length;
+    this.play();
+  };
+
   Reel.prototype.rest = function (slide) {
     var self = this;
     this.wait(HOLD_END, function () {
-      self.click(slide, function () {
-        if (self.cursor) self.cursor.classList.remove("is-on");
-        self.index = (self.index + 1) % self.slides.length;
-        self.play();
-      });
+      self.click(slide, function () { self.advance(); });
     });
   };
 
@@ -769,6 +781,11 @@
      scroll distances and the cursor targets, which are measured in rendered
      pixels. Both restart the frames from the top. */
   document.addEventListener("visibilitychange", resyncAll);
+
+  /* Turning reduced motion on or off should take effect without a reload. */
+  if (typeof reduced.addEventListener === "function") {
+    reduced.addEventListener("change", resyncAll);
+  }
 
   var resizeTimer;
   window.addEventListener("resize", function () {

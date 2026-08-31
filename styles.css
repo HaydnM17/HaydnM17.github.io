@@ -145,7 +145,6 @@ a { color: inherit; }
   transition: transform 0.35s var(--ease);
 }
 .nav a:hover { color: var(--chalk); }
-.nav a:not(.nav-cta):hover::after { transform: scaleX(1); transform-origin: left; }
 .nav a.is-current { color: var(--chalk); }
 .nav a.is-current::after { transform: scaleX(1); transform-origin: left; }
 .nav .nav-cta {
@@ -271,10 +270,9 @@ a { color: inherit; }
               border-color 0.25s var(--ease), transform 0.25s var(--ease);
 }
 .btn-primary { background: var(--brass); color: #17130A; }
-.btn-primary:hover { background: var(--chalk); transform: translateY(-2px); }
+.btn-primary:hover { background: var(--chalk); }
 .btn-ghost { color: var(--chalk); border-color: var(--line-int); }
-.btn-ghost:hover { border-color: var(--brass); color: var(--brass); transform: translateY(-2px); }
-@media (prefers-reduced-motion: reduce) { .btn:hover { transform: none; } }
+.btn-ghost:hover { border-color: var(--brass); color: var(--brass); }
 
 /* --- Sections ------------------------------------------------------------- */
 .section { padding-block: var(--section-y); }
@@ -294,19 +292,13 @@ a { color: inherit; }
   .project-alt .project-media { order: 2; }
 }
 .project-media { overflow: hidden; background: var(--card); }
-.project-media img:not(.reel-page) { transition: transform 0.7s var(--ease); width: 100%; }
+.project-media img:not(.reel-page) { transition: transform 0.2s ease; width: 100%; }
 /* scoped to the hovered image itself, so one shot moving never moves its neighbours */
-.zoom:hover img:not(.reel-page):not(.reel-head),
 .zoom:focus-visible img:not(.reel-page):not(.reel-head) { transform: scale(1.04); }
 /* A preview is a stack of positioned images, so the lift belongs to the whole
    device. Scaling one image inside it moved the pinned header on its own. */
-.zoom .device { transition: transform 0.7s var(--ease); }
-.zoom:hover .device, .zoom:focus-visible .device { transform: scale(1.025); }
-@media (prefers-reduced-motion: reduce) {
-  .zoom:hover img:not(.reel-page):not(.reel-head),
-  .zoom:focus-visible img:not(.reel-page):not(.reel-head) { transform: none; }
-  .zoom:hover .device, .zoom:focus-visible .device { transform: none; }
-}
+.zoom .device { transition: transform 0.2s ease; }
+.zoom:focus-visible .device { transform: scale(1.025); }
 .project-media-shots {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 0.6rem; background: none; overflow: visible;
@@ -421,7 +413,7 @@ body.is-locked { overflow: hidden; }
   transform: scaleY(0); transform-origin: 50% 0;
   transition: transform 0.5s var(--ease);
 }
-.layer:hover::after, .layer:focus-within::after { transform: scaleY(1); }
+.layer:focus-within::after { transform: scaleY(1); }
 
 .layer-head { display: flex; align-items: baseline; gap: 0.85rem; }
 .layer-n {
@@ -622,13 +614,14 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 /* Sheen across the primary buttons */
 .btn-primary { position: relative; overflow: hidden; }
 .btn-primary::after {
-  content: ""; position: absolute; top: 0; left: -130%;
+  content: ""; position: absolute; top: 0; left: 0;
   width: 55%; height: 100%; pointer-events: none;
   background: linear-gradient(100deg, transparent, rgba(255, 255, 255, 0.45), transparent);
-  transform: skewX(-18deg);
-  transition: left 0.7s var(--ease);
+  /* translate rather than `left`: `left` is a layout property and repaints the
+     button on every frame, where a transform runs on the GPU. */
+  transform: translateX(-230%) skewX(-18deg);
+  transition: transform 0.7s var(--ease);
 }
-.btn-primary:hover::after { left: 150%; }
 
 /* Headings rise word by word */
 .head-anim .w {
@@ -904,7 +897,9 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reel-slide { transition: none; }
+  /* The crossfade stays. It is opacity only, and it is how a reduced-motion
+     visitor still gets to see every screen of a project. Only the cursor and
+     the scrolling go, and both of those are movement. */
   .reel-cursor { display: none; }
 }
 
@@ -929,4 +924,19 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 @media (max-width: 600px) {
   .reel-pair { gap: 0; }
   .reel-pair .device-phone { display: none; }
+}
+
+/* --- Hover motion ---------------------------------------------------------
+   Gated twice over: only for a real pointer, because a touch tap fires a
+   :hover that then sticks until the next tap, and only where movement is
+   welcome. Colour and border feedback stays ungated above, and so do the
+   :focus-visible / :focus-within variants, so a keyboard gets the same
+   affordance either way. ---------------------------------------------- */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .nav a:not(.nav-cta):hover::after { transform: scaleX(1); transform-origin: left; }
+  .btn-primary:hover, .btn-ghost:hover { transform: translateY(-2px); }
+  .btn-primary:hover::after { transform: translateX(270%) skewX(-18deg); }
+  .zoom:hover img:not(.reel-page):not(.reel-head) { transform: scale(1.04); }
+  .zoom:hover .device { transform: scale(1.025); }
+  .layer:hover::after { transform: scaleY(1); }
 }
