@@ -69,7 +69,9 @@
     var dots = [];
 
     var REACH = 240;   // how far the pointer's influence carries
-    var SWIRL = 165;   // px/s² of rotation around the pointer
+    var SWIRL = 165;   // px/s2 of rotation around the pointer
+    var CORE = 90;     // radius of clear space held around the pointer
+    var CLEAR = 240;   // px/s2 of outward push inside it
     var LINK = 118;    // two dots closer than this can be linked
     var SPOKE = 155;   // dots closer than this link to the pointer itself
 
@@ -130,6 +132,15 @@
             var force = SWIRL * target * Math.min(d / 45, 1);
             a.ivx += (-dy / d) * force * dt;
             a.ivy += (dx / d) * force * dt;
+
+            /* Hold the core clear. The swirl tapers to nothing at the centre,
+               so without this the pointer collects dots as it sweeps over
+               them and they sit there. */
+            if (d < CORE) {
+              var push = CLEAR * (1 - d / CORE);
+              a.ivx -= (dx / d) * push * dt;
+              a.ivy -= (dy / d) * push * dt;
+            }
           }
         }
         a.lit += (target - a.lit) * Math.min(dt * 5, 1);
