@@ -55,10 +55,10 @@
   }
 
   /* ---- Hero particle web -------------------------------------------------
-     Drifting dots that circle the pointer rather than being drawn into it.
-     Straight hairlines link the ones near it, so the web forms around the
-     cursor and fades away behind it instead of hanging over the whole hero
-     like a cobweb. */
+     Drifting dots that are gathered in from a distance and then held in a
+     ring orbiting the pointer, never landing on it. Straight hairlines link
+     the ones near each other, so the web forms around the cursor and fades
+     away behind it instead of hanging over the whole hero like a cobweb. */
   (function () {
     var canvas = document.getElementById("hero-canvas");
     if (!canvas || !canvas.getContext) return;
@@ -68,10 +68,11 @@
     var running = false, frame = 0, last = 0;
     var dots = [];
 
-    var REACH = 240;   // how far the pointer's influence carries
-    var SWIRL = 165;   // px/s2 of rotation around the pointer
-    var CORE = 90;     // radius of clear space held around the pointer
-    var CLEAR = 240;   // px/s2 of outward push inside it
+    var REACH = 340;   // how far the pointer's influence carries
+    var DRAW = 200;    // px/s2 of inward pull, what gathers them in
+    var SWIRL = 245;   // px/s2 of rotation around the pointer
+    var ORBIT = 58;    // inside this they are pushed back out, so a ring holds
+    var CLEAR = 450;   // px/s2 of that outward push at the very centre
     var LINK = 118;    // two dots closer than this can be linked
     var SPOKE = 155;   // dots closer than this link to the pointer itself
 
@@ -126,21 +127,19 @@
           d = Math.sqrt(dx * dx + dy * dy);
           if (d < REACH && d > 0.001) {
             target = 1 - d / REACH;
-            /* Perpendicular to the line joining dot and pointer, so the push is
-               sideways and never inward. The taper keeps the ones closest to
-               the centre from whipping round at silly speed. */
+            /* Sideways, which is what makes them go round rather than in. The
+               taper stops the innermost ones whipping about at silly speed. */
             var force = SWIRL * target * Math.min(d / 45, 1);
             a.ivx += (-dy / d) * force * dt;
             a.ivy += (dx / d) * force * dt;
 
-            /* Hold the core clear. The swirl tapers to nothing at the centre,
-               so without this the pointer collects dots as it sweeps over
-               them and they sit there. */
-            if (d < CORE) {
-              var push = CLEAR * (1 - d / CORE);
-              a.ivx -= (dx / d) * push * dt;
-              a.ivy -= (dy / d) * push * dt;
-            }
+            /* Inward out at range, outward once inside ORBIT. The two cancel
+               at one radius, so dots gather from a long way off and settle
+               into a ring there instead of drifting past or piling on. */
+            var radial = DRAW * target;
+            if (d < ORBIT) radial -= CLEAR * (1 - d / ORBIT);
+            a.ivx += (dx / d) * radial * dt;
+            a.ivy += (dy / d) * radial * dt;
           }
         }
         a.lit += (target - a.lit) * Math.min(dt * 5, 1);
