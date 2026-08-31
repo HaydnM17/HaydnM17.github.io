@@ -107,6 +107,10 @@ screen recording would fix both.
 These came from direct feedback. Do not reintroduce them.
 
 - Never say the site is "written by hand" or "built by hand". It is untrue.
+- Never "we", "our" or "us". He works alone, so it is always "I". "We work out
+  what your site has to do" was cut for this.
+- Each of the three build services says the whole process: working out what it
+  has to do, designing it, building it, and getting it live or shipped.
 - No claims about what Haydn likes, enjoys or prefers. "I like taking a thing end
   to end" was cut for this. Write what he does and what a client gets, not his
   character.
