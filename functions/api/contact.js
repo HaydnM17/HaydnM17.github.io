@@ -61,6 +61,86 @@ const pageResponse = function (data, status) {
   });
 };
 
+/* Escapes text before it goes anywhere near the HTML body. A message is
+   whatever a stranger typed into a form on the open internet, so it is treated
+   as text in every direction and never as markup. */
+const escapeHtml = function (value) {
+  return String(value == null ? "" : value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+};
+
+const LABEL =
+  "font:600 11px/1.4 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;" +
+  "letter-spacing:.12em;text-transform:uppercase;color:#6F8276";
+const BODY =
+  "font:400 15px/1.6 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#17201C";
+
+/* A real looking email instead of a wall of unstyled text. Tables and inline
+   styles, because that is still what mail clients understand: no flexbox, no
+   grid, no external stylesheet, no remote images. The site's own colours on a
+   light card, which reads correctly both in clients that ignore dark mode and
+   in the ones that invert it. */
+const htmlBody = function (mail) {
+  const rows = mail.facts
+    .map(function (fact) {
+      const value = fact.href
+        ? '<a href="' + escapeHtml(fact.href) + '" style="color:#1C5F4A">' + escapeHtml(fact.value) + "</a>"
+        : escapeHtml(fact.value);
+      return (
+        '<tr><td style="' + LABEL + ';padding:0 14px 10px 0;width:84px;vertical-align:top">' +
+        escapeHtml(fact.label) +
+        '</td><td style="' + BODY + ';padding:0 0 10px">' + value + "</td></tr>"
+      );
+    })
+    .join("");
+
+  return [
+    '<!doctype html><html lang="en"><head><meta charset="utf-8">',
+    '<meta name="viewport" content="width=device-width,initial-scale=1">',
+    "<title>" + escapeHtml(mail.subject) + "</title></head>",
+    '<body style="margin:0;padding:0;background:#EEF1EF">',
+    /* Sits in the inbox preview line instead of the first words of the message. */
+    '<div style="display:none;max-height:0;overflow:hidden;opacity:0">' + escapeHtml(mail.preview) + "</div>",
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#EEF1EF;padding:24px 12px">',
+    "<tr><td align=\"center\">",
+    '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;background:#FFFFFF;border:1px solid #DCE3DE">',
+
+    '<tr><td style="background:#0F1815;padding:22px 28px">',
+    "<div style=\"font:700 17px/1.2 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#ECF1EC\">Haydn McIntyre</div>",
+    '<div style="' + LABEL + ';color:#E5B457;padding-top:6px">New enquiry</div>',
+    "</td></tr>",
+    '<tr><td style="height:3px;background:#E5B457;font-size:0;line-height:0">&nbsp;</td></tr>',
+
+    '<tr><td style="padding:26px 28px 6px">',
+    '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">' + rows + "</table>",
+    "</td></tr>",
+
+    '<tr><td style="padding:10px 28px 4px">',
+    '<div style="' + LABEL + ';padding-bottom:8px">Message</div>',
+    '<div style="border-left:3px solid #1C5F4A;background:#F6F8F7;padding:16px 18px;' + BODY + '">',
+    mail.messageHtml,
+    "</div></td></tr>",
+
+    '<tr><td style="padding:22px 28px 28px">',
+    '<a href="mailto:' + escapeHtml(mail.replyTo) + '" ',
+    'style="display:inline-block;background:#E5B457;color:#17130A;text-decoration:none;',
+    "font:600 14px/1 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;padding:14px 22px\">",
+    "Reply to " + escapeHtml(mail.name) + "</a>",
+    "</td></tr>",
+
+    '<tr><td style="border-top:1px solid #DCE3DE;padding:16px 28px;',
+    "font:400 12px/1.5 -apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;color:#6F8276\">",
+    "Sent from the contact form on " + escapeHtml(mail.site) + ". Replying goes straight to the sender.",
+    "</td></tr>",
+
+    "</table></td></tr></table></body></html>"
+  ].join("");
+};
+
 /* Which mail path is configured, if any. */
 const provider = function (env) {
   if (!env.CONTACT_TO || !env.CONTACT_FROM) return null;
@@ -101,18 +181,24 @@ const sendWithCloudflare = async function (env, mail) {
     "content-type": "application/json"
   };
   const payload = {
-    from: env.CONTACT_FROM,
+    from: mail.from,
     to: env.CONTACT_TO,
     subject: mail.subject,
     text: mail.text,
+    html: mail.html,
     reply_to: mail.replyTo
   };
 
   let res = await fetch(url, { method: "POST", headers: headers, body: JSON.stringify(payload) });
+  /* Shed the optional parts one at a time rather than lose the message. Some
+     accounts reject reply_to, and an older sending API may not know html. The
+     plain text body is the last thing standing, so the mail still arrives. */
   if (res.status === 400) {
-    /* Some accounts reject reply_to. Losing the reply header beats losing the
-       message, and the address is in the body anyway. */
     delete payload.reply_to;
+    res = await fetch(url, { method: "POST", headers: headers, body: JSON.stringify(payload) });
+  }
+  if (res.status === 400) {
+    delete payload.html;
     res = await fetch(url, { method: "POST", headers: headers, body: JSON.stringify(payload) });
   }
   return res;
@@ -126,10 +212,11 @@ const sendWithResend = function (env, mail) {
       "content-type": "application/json"
     },
     body: JSON.stringify({
-      from: env.CONTACT_FROM,
+      from: mail.from,
       to: [env.CONTACT_TO],
       subject: mail.subject,
       text: mail.text,
+      html: mail.html,
       reply_to: mail.replyTo
     })
   });
@@ -178,19 +265,41 @@ export async function onRequestPost(context) {
   if (!how) return respond({ ok: false, code: "not_configured" }, 501);
 
   const site = new URL(request.url).hostname;
+  const country = (request.cf && request.cf.country) || "unknown";
+  const sent = new Date().toUTCString();
+
   const mail = {
-    subject: site + ": message from " + name,
+    /* A display name reads as a person rather than a bare robot address, and
+       filters weigh a naked automated sender more harshly. */
+    from: 'Haydn McIntyre website <' + env.CONTACT_FROM + '>',
+    subject: "New enquiry from " + name,
     replyTo: email,
+    name: name,
+    site: site,
+    preview: message.replace(/\s+/g, " ").slice(0, 140),
+    facts: [
+      { label: "Name", value: name },
+      { label: "Email", value: email, href: "mailto:" + email },
+      { label: "Sent", value: sent },
+      { label: "Country", value: country }
+    ],
+    messageHtml: escapeHtml(message).replace(/\r?\n/g, "<br>"),
+    /* The plain text alternative is not a leftover. Mail carrying both parts
+       looks like real mail, where a text-only body is a spam signal on its own. */
     text: [
+      "New enquiry from " + name,
+      "",
       "Name:    " + name,
       "Email:   " + email,
-      "Sent:    " + new Date().toISOString(),
-      "Country: " + ((request.cf && request.cf.country) || "unknown"),
+      "Sent:    " + sent,
+      "Country: " + country,
       "",
       message,
-      ""
+      "",
+      "Sent from the contact form on " + site + ". Reply to reach " + name + " directly."
     ].join("\n")
   };
+  mail.html = htmlBody(mail);
 
   let res;
   try {
