@@ -581,3 +581,169 @@
       });
   });
 })();
+
+/* ---- Animated project previews ------------------------------------------
+   Every [data-reel] frame holds one or more .reel-page captures. A page taller
+   than its screen is scrolled through; a page that fits is held still. Between
+   pages a cursor drifts to a plausible target and clicks, so a cut reads as
+   navigation rather than a slideshow.
+
+   A frame only runs while it is on screen, and never at all under reduced
+   motion, where the first page sits at the top as a plain screenshot. --- */
+(function () {
+  var frames = document.querySelectorAll("[data-reel]");
+  if (!frames.length) return;
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  if (reduced.matches || !("IntersectionObserver" in window)) return;
+
+  /* Pixels of scroll per second, and how long a page rests at each end. */
+  var SPEED = 170;
+  var HOLD_TOP = 1100;
+  var HOLD_END = 1400;
+  var CURSOR_MOVE = 620;
+
+  function Reel(frame) {
+    this.frame = frame;
+    this.screen = frame.querySelector(".device-screen");
+    this.pages = Array.prototype.slice.call(frame.querySelectorAll(".reel-page"));
+    this.cursor = frame.querySelector(".reel-cursor");
+    this.index = 0;
+    this.timer = 0;
+    this.running = false;
+  }
+
+  Reel.prototype.overflow = function (page) {
+    /* How far this page can scroll before its bottom edge is reached. The
+       image is width-constrained, so its rendered height is what matters. */
+    return Math.max(0, page.offsetHeight - this.screen.clientHeight);
+  };
+
+  Reel.prototype.wait = function (ms, next) {
+    var self = this;
+    this.timer = window.setTimeout(function () {
+      if (self.running) next();
+    }, ms);
+  };
+
+  /* Move the cursor to a point given in percentages of the screen box, then
+     fire the click ring. Calls back once the ring has played. */
+  Reel.prototype.click = function (xPct, yPct, next) {
+    var self = this;
+    if (!this.cursor) return this.wait(200, next);
+    var box = this.screen.getBoundingClientRect();
+    this.cursor.style.transition =
+      "transform " + CURSOR_MOVE + "ms var(--ease), opacity 0.3s linear";
+    this.cursor.style.transform =
+      "translate(" + (box.width * xPct) / 100 + "px," +
+      ((box.height * yPct) / 100 + this.screen.offsetTop) + "px)";
+    this.cursor.classList.add("is-on");
+    this.wait(CURSOR_MOVE, function () {
+      self.cursor.classList.remove("is-click");
+      /* Reflow so the animation restarts on every click, not just the first. */
+      void self.cursor.offsetWidth;
+      self.cursor.classList.add("is-click");
+      self.wait(520, function () {
+        self.cursor.classList.remove("is-on");
+        next();
+      });
+    });
+  };
+
+  /* The scroll is a CSS transition rather than a per-frame loop: it runs on
+     the compositor, costs no JavaScript while it plays, and is sequenced by a
+     timer rather than requestAnimationFrame. */
+  Reel.prototype.scrollPage = function (page, distance, next) {
+    var duration = (distance / SPEED) * 1000;
+    page.style.transition =
+      "transform " + Math.round(duration) + "ms cubic-bezier(0.45, 0, 0.35, 1), opacity 0.45s var(--ease)";
+    page.style.transform = "translateY(" + -distance + "px)";
+    this.wait(duration + 80, next);
+  };
+
+  Reel.prototype.play = function () {
+    var self = this;
+    var page = this.pages[this.index];
+    var distance = this.overflow(page);
+
+    page.style.transition = "none";
+    page.style.transform = "translateY(0)";
+    void page.offsetWidth; /* commit the snap before a new transition is set */
+    page.style.transition = ""; /* back to the stylesheet fade until a scroll sets its own */
+    this.pages.forEach(function (p) { p.classList.toggle("is-live", p === page); });
+
+    this.wait(HOLD_TOP, function () {
+      if (distance > 4) {
+        self.scrollPage(page, distance, function () { self.finish(); });
+      } else {
+        self.finish();
+      }
+    });
+  };
+
+  /* Page done. Point at something near the bottom of the frame, click, and
+     hand over to the next page. */
+  Reel.prototype.finish = function () {
+    var self = this;
+    this.wait(HOLD_END, function () {
+      self.click(28 + Math.random() * 44, 55 + Math.random() * 25, function () {
+        self.index = (self.index + 1) % self.pages.length;
+        self.play();
+      });
+    });
+  };
+
+  Reel.prototype.start = function () {
+    if (this.running) return;
+    this.running = true;
+    this.play();
+  };
+
+  Reel.prototype.stop = function () {
+    this.running = false;
+    window.clearTimeout(this.timer);
+    if (this.cursor) this.cursor.classList.remove("is-on", "is-click");
+  };
+
+  var reels = new WeakMap();
+  var onScreen = new WeakMap();
+
+  function sync(frame) {
+    var reel = reels.get(frame);
+    if (!reel) return;
+    if (onScreen.get(frame) && !document.hidden) reel.start();
+    else reel.stop();
+  }
+
+  var watcher = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      onScreen.set(entry.target, entry.isIntersecting);
+      sync(entry.target);
+    });
+  }, { threshold: 0.25 });
+
+  Array.prototype.forEach.call(frames, function (frame) {
+    var reel = new Reel(frame);
+    if (!reel.screen || !reel.pages.length) return;
+    reels.set(frame, reel);
+    watcher.observe(frame);
+  });
+
+  function resyncAll() {
+    Array.prototype.forEach.call(frames, function (frame) {
+      var reel = reels.get(frame);
+      if (reel) reel.stop();
+      sync(frame);
+    });
+  }
+
+  /* A background tab throws off the timers, and a resize invalidates the
+     scroll distances, which are measured in rendered pixels. Both restart. */
+  document.addEventListener("visibilitychange", resyncAll);
+
+  var resizeTimer;
+  window.addEventListener("resize", function () {
+    window.clearTimeout(resizeTimer);
+    resizeTimer = window.setTimeout(resyncAll, 250);
+  }, { passive: true });
+})();
