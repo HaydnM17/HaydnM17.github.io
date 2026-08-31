@@ -46,10 +46,50 @@ Notes that cost time to rediscover:
   so scroll-triggered behaviour cannot be tested that way.
 - Put test harness files **inside this folder**, not the scratchpad, or relative
   `styles.css` and `script.js` resolve to stale copies.
+- `requestAnimationFrame` callbacks never run under `--virtual-time-budget`,
+  for the same reason `scrollTo` does not: no frames are produced. Timers and
+  CSS transitions do advance, so drive animation with those if it has to be
+  testable here. The preview reels were rewritten from rAF to CSS transitions
+  for exactly this reason, and are better for it.
 - Animations mid-flight ruin screenshots. Inject overrides to settle them:
   `.reveal,.reveal.is-in{opacity:1!important;transform:none!important}`
   `.rise{animation:none!important;opacity:1!important;transform:none!important}`
   `.bolt-rule polyline{stroke-dashoffset:0!important}`
+
+## Project previews
+
+The previews on the home page and on `portfolio.html` are animated in the
+browser, not videos. Each `[data-reel]` frame holds `.reel-slide` units. A slide
+is one page: an optional `.reel-head` pinned at the top the way a real sticky
+header is, and a `.reel-page` that scrolls underneath it. `script.js` runs every
+slide on the same fixed beat whatever its height, which is what keeps the
+desktop frame and the phone beside it in step while they browse the same site.
+
+A slide names its click target with `data-click="x,y"`, as percentages of its
+pinned header if it has one, otherwise of the screen. That is why the cursor
+lands on the actual link at any frame size. The site slides point at the nav
+links (`Portfolio` at 66.9%, `Home` at 60.7% of a 1280px capture); the Movement
+Unlimited slides point at its nav tabs. Phone frames carry no cursor element at
+all, so they wait out the same interval instead.
+
+Assets are captured with headless Edge, then sliced into a header strip and a
+headerless body so the header can stay pinned. Capture with the topbar forced
+into its scrolled state and the reels frozen (`sed 's| data-reel>|>|g'`), or the
+preview will contain a half-played copy of itself:
+
+```bash
+msedge --headless=new --window-size=1280,7000 --screenshot=out.png --virtual-time-budget=15000 "file:///D:/haydn/Website/index.html"
+```
+
+Mobile captures go through a 390px `<iframe>` on a wider harness page, per the
+note above. The header is 69px at every width. Regenerate `head-desk-*`,
+`reel-desk-*`, `head-mob-*` and `reel-mob-*` whenever the pages change enough to
+look stale.
+
+Movement Unlimited and Workout Tracker only have single viewport captures, so
+they cut between screens rather than scrolling, and there is no mobile view of
+Movement Unlimited to pair with its desktop one. Full length captures or a short
+screen recording would fix both.
 
 ## Conventions
 
@@ -97,8 +137,9 @@ These came from direct feedback. Do not reintroduce them.
   app. That fallback is the deliberate default for client sites, so a site can
   ship with nobody having configured anything. Check the state with
   `curl -s https://haydnmcintyre.ca/api/contact`.
-- **`assets/work/this-site.png` is ~1.6 MB.** Converting it to WebP would cut it
-  by roughly 90% with no visible loss.
+- **`assets/work/this-site.png` is ~1.6 MB and no longer referenced.** The
+  animated previews replaced it. Delete it, or convert it to WebP if it is
+  wanted again.
 - GitHub Pages may still be enabled on the repo, serving a duplicate of the site.
 
 ## Email

@@ -349,7 +349,8 @@
 
     document.querySelectorAll(".zoom").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        var img = btn.querySelector("img");
+        /* On an animated preview, blow up the page that is actually showing. */
+        var img = btn.querySelector(".reel-slide.is-live .reel-page") || btn.querySelector("img");
         if (img) open(img);
       });
     });
@@ -581,15 +582,20 @@
       });
   });
 })();
-
 /* ---- Animated project previews ------------------------------------------
-   Every [data-reel] frame holds one or more .reel-page captures. A page taller
-   than its screen is scrolled through; a page that fits is held still. Between
-   pages a cursor drifts to a plausible target and clicks, so a cut reads as
-   navigation rather than a slideshow.
+   Each [data-reel] frame holds .reel-slide units. A slide is one page of the
+   thing being shown: an optional .reel-head that stays pinned the way a real
+   sticky header does, and a .reel-page that scrolls underneath it.
 
-   A frame only runs while it is on screen, and never at all under reduced
-   motion, where the first page sits at the top as a plain screenshot. --- */
+   Every slide runs on the same beat regardless of how tall its page is, so a
+   desktop frame and the phone frame beside it stay in step while they browse
+   the same site. The cursor moves to a real target named by the slide's
+   data-click, clicks it, and only then does the next slide come up, so the cut
+   reads as the click that caused it. Frames with no cursor wait out the same
+   interval rather than jumping ahead.
+
+   A frame only runs while it is on screen, and not at all under reduced
+   motion, where the first slide sits at the top as a plain screenshot. --- */
 (function () {
   var frames = document.querySelectorAll("[data-reel]");
   if (!frames.length) return;
@@ -597,27 +603,27 @@
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
   if (reduced.matches || !("IntersectionObserver" in window)) return;
 
-  /* Pixels of scroll per second, and how long a page rests at each end. */
-  var SPEED = 170;
-  var HOLD_TOP = 1100;
-  var HOLD_END = 1400;
-  var CURSOR_MOVE = 620;
+  /* One slide: settle, scroll the page, rest, then point and click. A page
+     with nothing to scroll skips only the scroll. */
+  var HOLD_TOP = 1500;
+  var SCROLL_MS = 12000;
+  var HOLD_END = 1700;
+  /* A page has to overflow its frame by a real amount to be worth scrolling.
+     Below this it is held still, so a capture that only spills a few pixels
+     does not crawl for twelve seconds. */
+  var SCROLL_MIN = 0.25;
+  var CURSOR_MOVE = 1000;
+  var CLICK_HOLD = 620;
 
   function Reel(frame) {
     this.frame = frame;
     this.screen = frame.querySelector(".device-screen");
-    this.pages = Array.prototype.slice.call(frame.querySelectorAll(".reel-page"));
+    this.slides = Array.prototype.slice.call(frame.querySelectorAll(".reel-slide"));
     this.cursor = frame.querySelector(".reel-cursor");
     this.index = 0;
     this.timer = 0;
     this.running = false;
   }
-
-  Reel.prototype.overflow = function (page) {
-    /* How far this page can scroll before its bottom edge is reached. The
-       image is width-constrained, so its rendered height is what matters. */
-    return Math.max(0, page.offsetHeight - this.screen.clientHeight);
-  };
 
   Reel.prototype.wait = function (ms, next) {
     var self = this;
@@ -626,68 +632,90 @@
     }, ms);
   };
 
-  /* Move the cursor to a point given in percentages of the screen box, then
-     fire the click ring. Calls back once the ring has played. */
-  Reel.prototype.click = function (xPct, yPct, next) {
+  /* How far this slide's page can travel before its bottom edge is reached.
+     The pinned header takes its height out of the space the page gets. */
+  Reel.prototype.overflow = function (slide) {
+    var page = slide.querySelector(".reel-page");
+    var head = slide.querySelector(".reel-head");
+    if (!page) return 0;
+    var room = this.screen.clientHeight - (head ? head.offsetHeight : 0);
+    return Math.max(0, page.offsetHeight - room);
+  };
+
+  /* The slide names its click target as percentages of whichever element the
+     target lives in: the pinned header if there is one, otherwise the screen.
+     That keeps the cursor on the actual link at any frame size. */
+  Reel.prototype.target = function (slide) {
+    var spec = (slide.getAttribute("data-click") || "").split(",");
+    if (spec.length !== 2) return null;
+    var ref = slide.querySelector(".reel-head") || this.screen;
+    var refBox = ref.getBoundingClientRect();
+    var frameBox = this.frame.getBoundingClientRect();
+    return {
+      x: refBox.left - frameBox.left + (refBox.width * parseFloat(spec[0])) / 100,
+      y: refBox.top - frameBox.top + (refBox.height * parseFloat(spec[1])) / 100
+    };
+  };
+
+  Reel.prototype.click = function (slide, next) {
     var self = this;
-    if (!this.cursor) return this.wait(200, next);
-    var box = this.screen.getBoundingClientRect();
+    var spot = this.cursor && this.target(slide);
+    /* No cursor, or nowhere honest to point: wait out the same beat so a
+       paired frame does not run ahead. */
+    if (!spot) return this.wait(CURSOR_MOVE + CLICK_HOLD, next);
+
     this.cursor.style.transition =
       "transform " + CURSOR_MOVE + "ms var(--ease), opacity 0.3s linear";
-    this.cursor.style.transform =
-      "translate(" + (box.width * xPct) / 100 + "px," +
-      ((box.height * yPct) / 100 + this.screen.offsetTop) + "px)";
+    this.cursor.style.transform = "translate(" + spot.x + "px," + spot.y + "px)";
     this.cursor.classList.add("is-on");
     this.wait(CURSOR_MOVE, function () {
       self.cursor.classList.remove("is-click");
-      /* Reflow so the animation restarts on every click, not just the first. */
-      void self.cursor.offsetWidth;
+      void self.cursor.offsetWidth; /* restart the ring on every click */
       self.cursor.classList.add("is-click");
-      self.wait(520, function () {
-        self.cursor.classList.remove("is-on");
-        next();
-      });
+      self.wait(CLICK_HOLD, next);
     });
   };
 
   /* The scroll is a CSS transition rather than a per-frame loop: it runs on
-     the compositor, costs no JavaScript while it plays, and is sequenced by a
-     timer rather than requestAnimationFrame. */
-  Reel.prototype.scrollPage = function (page, distance, next) {
-    var duration = (distance / SPEED) * 1000;
-    page.style.transition =
-      "transform " + Math.round(duration) + "ms cubic-bezier(0.45, 0, 0.35, 1), opacity 0.45s var(--ease)";
+     the compositor and costs no JavaScript while it plays. Every slide takes
+     the same time whatever its height, which is what keeps two frames showing
+     the same site in step. */
+  Reel.prototype.scroll = function (slide, distance, next) {
+    var page = slide.querySelector(".reel-page");
+    page.style.transition = "transform " + SCROLL_MS + "ms cubic-bezier(0.4, 0, 0.35, 1)";
     page.style.transform = "translateY(" + -distance + "px)";
-    this.wait(duration + 80, next);
+    this.wait(SCROLL_MS + 80, next);
   };
 
   Reel.prototype.play = function () {
     var self = this;
-    var page = this.pages[this.index];
-    var distance = this.overflow(page);
+    var slide = this.slides[this.index];
+    var page = slide.querySelector(".reel-page");
+    var distance = this.overflow(slide);
 
-    page.style.transition = "none";
-    page.style.transform = "translateY(0)";
-    void page.offsetWidth; /* commit the snap before a new transition is set */
-    page.style.transition = ""; /* back to the stylesheet fade until a scroll sets its own */
-    this.pages.forEach(function (p) { p.classList.toggle("is-live", p === page); });
+    if (page) {
+      page.style.transition = "none";
+      page.style.transform = "translateY(0)";
+      void page.offsetWidth; /* commit the snap before a new transition is set */
+      page.style.transition = "";
+    }
+    this.slides.forEach(function (s) { s.classList.toggle("is-live", s === slide); });
 
     this.wait(HOLD_TOP, function () {
-      if (distance > 4) {
-        self.scrollPage(page, distance, function () { self.finish(); });
+      if (distance > self.screen.clientHeight * SCROLL_MIN) {
+        self.scroll(slide, distance, function () { self.rest(slide); });
       } else {
-        self.finish();
+        self.rest(slide);
       }
     });
   };
 
-  /* Page done. Point at something near the bottom of the frame, click, and
-     hand over to the next page. */
-  Reel.prototype.finish = function () {
+  Reel.prototype.rest = function (slide) {
     var self = this;
     this.wait(HOLD_END, function () {
-      self.click(28 + Math.random() * 44, 55 + Math.random() * 25, function () {
-        self.index = (self.index + 1) % self.pages.length;
+      self.click(slide, function () {
+        if (self.cursor) self.cursor.classList.remove("is-on");
+        self.index = (self.index + 1) % self.slides.length;
         self.play();
       });
     });
@@ -724,7 +752,7 @@
 
   Array.prototype.forEach.call(frames, function (frame) {
     var reel = new Reel(frame);
-    if (!reel.screen || !reel.pages.length) return;
+    if (!reel.screen || !reel.slides.length) return;
     reels.set(frame, reel);
     watcher.observe(frame);
   });
@@ -737,8 +765,9 @@
     });
   }
 
-  /* A background tab throws off the timers, and a resize invalidates the
-     scroll distances, which are measured in rendered pixels. Both restart. */
+  /* A background tab throws off the timers, and a resize invalidates both the
+     scroll distances and the cursor targets, which are measured in rendered
+     pixels. Both restart the frames from the top. */
   document.addEventListener("visibilitychange", resyncAll);
 
   var resizeTimer;
