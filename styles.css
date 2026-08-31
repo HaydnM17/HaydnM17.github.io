@@ -287,7 +287,6 @@ a { color: inherit; }
   gap: clamp(1.75rem, 4vw, 3.5rem);
   align-items: center;
   padding-block: clamp(2rem, 5vw, 3.5rem);
-  border-top: 1px solid var(--line);
 }
 @media (min-width: 900px) {
   .project { grid-template-columns: 1.15fr 1fr; }
@@ -403,7 +402,9 @@ body.is-locked { overflow: hidden; }
 /* --- The stack -----------------------------------------------------------
    Four ordered layers, top of the stack down to delivery. The numbering is
    real information here: it is the order the request travels. */
-.layers { display: grid; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+/* The 1px gaps show the ground through as a divider between rows. No outer
+   border: that put a rule directly under the section heading. */
+.layers { display: grid; gap: 1px; background: var(--line); }
 .layer {
   position: relative;
   background: var(--ground);
@@ -952,30 +953,6 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 }
 .hero-eyebrow { letter-spacing: 0.24em; }
 .tags li { text-transform: none; letter-spacing: 0.02em; }
-
-/* --- Container guides -----------------------------------------------------
-   Thin rules on the content edges with a tick at each section boundary, so the
-   measure of the page is visible rather than implied. Decorative only: behind
-   the content, and never in the way of a pointer. Dropped on narrow screens,
-   where the lines would sit on the screen edge and read as a border. ----- */
-@media (min-width: 860px) {
-  .section > .wrap { position: relative; }
-  .section > .wrap::before,
-  .section > .wrap::after {
-    content: "";
-    position: absolute; top: calc(var(--section-y) * -1); bottom: calc(var(--section-y) * -1);
-    width: 5px; pointer-events: none; z-index: 0;
-    /* A hairline down the content edge, with a tick where each section starts.
-       The element is 5px wide only so the tick has room; the line itself is the
-       1px band centred in it. */
-    background:
-      linear-gradient(var(--line-int), var(--line-int)) 0 0 / 5px 5px no-repeat,
-      linear-gradient(var(--line), var(--line)) 2px 0 / 1px 100% no-repeat;
-  }
-  .section > .wrap::before { left: calc(var(--gutter) - 3px); }
-  .section > .wrap::after { right: calc(var(--gutter) - 3px); }
-  .section > .wrap > * { position: relative; z-index: 1; }
-}
 
 /* --- Hit areas -------------------------------------------------------------
    WCAG 2.5.8 asks for 24x24 CSS pixels on a standalone control. These links
