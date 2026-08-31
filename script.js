@@ -68,12 +68,12 @@
     var running = false, frame = 0, last = 0;
     var dots = [];
 
-    var REACH = 420;   // how far the pointer's influence carries
-    var DRAW = 1000;   // px/s2 of inward pull, what gathers them in
-    var SWIRL = 400;   // px/s2 of rotation around the pointer
-    var TAPER = 18;    // spin eases off inside this, so the middle stays sane
-    var ORBIT = 24;    // inside this they are pushed back out, so a ring holds
-    var CLEAR = 750;   // px/s2 of that outward push at the very centre
+    var REACH = 300;   // how far the pointer's influence carries
+    var DRAW = 300;    // px/s2 of inward pull, what gathers them in
+    var SWIRL = 220;   // px/s2 of rotation around the pointer
+    var TAPER = 32;    // spin eases off inside this, so the middle stays sane
+    var ORBIT = 36;    // inside this they are pushed back out, so a ring holds
+    var CLEAR = 500;   // px/s2 of that outward push at the very centre
     var LINK = 118;    // two dots closer than this can be linked
     var SPOKE = 155;   // dots closer than this link to the pointer itself
 
