@@ -72,8 +72,8 @@
     var DRAW = 300;    // px/s2 of inward pull, what gathers them in
     var SWIRL = 220;   // px/s2 of rotation around the pointer
     var TAPER = 32;    // spin eases off inside this, so the middle stays sane
-    var ORBIT = 36;    // inside this they are pushed back out, so a ring holds
-    var CLEAR = 500;   // px/s2 of that outward push at the very centre
+    var ORBIT = 34;    // inside this they are pushed back out, so a ring holds
+    var CLEAR = 1500;  // px/s2 shoving them back out, hardest at the centre
     var LINK = 90;     // two dots closer than this can be linked
     var GAP = 26;      // no link may pass this close to the pointer
 
