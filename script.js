@@ -88,15 +88,21 @@
 
       dots = [];
       for (var i = 0; i < count; i++) {
+        /* Size drives the rest, so the field reads as having some depth: the
+           bigger ones drift slower and lean on the pointer a little less, the
+           small ones scurry and swing wider. */
+        var r = rand(1.2, 3);
+        var weight = (r - 1.2) / 1.8;        // 0 for the smallest, 1 for the biggest
         dots.push({
           x: Math.random() * w,
           y: Math.random() * h,
-          bvx: rand(-11, 11),   // base drift, px/sec
-          bvy: rand(-9, 9),
+          bvx: rand(-11, 11) * (1.45 - weight * 0.75),   // base drift, px/sec
+          bvy: rand(-9, 9) * (1.45 - weight * 0.75),
           ivx: 0,               // pointer-induced velocity, decays away
           ivy: 0,
           lit: 0,               // eased 0..1 nearness to the pointer
-          r: rand(1, 2.3)
+          pull: 1.14 - weight * 0.26,        // heavier ones ride a wider, slower orbit
+          r: r
         });
       }
     };
@@ -130,7 +136,7 @@
             target = 1 - d / REACH;
             /* Sideways, which is what makes them go round rather than in. The
                taper stops the innermost ones whipping about at silly speed. */
-            var force = SWIRL * target * Math.min(d / TAPER, 1);
+            var force = SWIRL * target * Math.min(d / TAPER, 1) * a.pull;
             a.ivx += (-dy / d) * force * dt;
             a.ivy += (dx / d) * force * dt;
 
@@ -139,6 +145,7 @@
                into a ring there instead of drifting past or piling on. */
             var radial = DRAW * target;
             if (d < ORBIT) radial -= CLEAR * (1 - d / ORBIT);
+            radial *= a.pull;
             a.ivx += (dx / d) * radial * dt;
             a.ivy += (dy / d) * radial * dt;
           }
