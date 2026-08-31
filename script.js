@@ -411,22 +411,19 @@
     paint();
   }
 
-  /* ---- Section rail + nav highlighting ----------------------------------- */
+  /* ---- Nav highlighting --------------------------------------------------
+     Nav links carry data-sec so Home and Portfolio can highlight too, not
+     just the ones whose href is a hash on this page. The sections to watch
+     come from those links, so nothing else has to list them. */
   (function () {
-    var rail = document.getElementById("rail");
-    if (!rail || !("IntersectionObserver" in window)) return;
+    if (!("IntersectionObserver" in window)) return;
 
-    var links = Array.prototype.slice.call(rail.querySelectorAll("a"));
-    /* nav links carry data-sec so Home and Portfolio can highlight too,
-       not just the ones whose href is a hash on this page */
     var navLinks = Array.prototype.slice.call(
       document.querySelectorAll(".nav a[data-sec]")
     );
+    if (!navLinks.length) return;
 
     var setActive = function (id) {
-      links.forEach(function (a) {
-        a.classList.toggle("is-active", a.getAttribute("data-sec") === id);
-      });
       navLinks.forEach(function (a) {
         a.classList.toggle("is-current", a.getAttribute("data-sec") === id);
       });
@@ -438,7 +435,7 @@
       });
     }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
 
-    links.forEach(function (a) {
+    navLinks.forEach(function (a) {
       var section = document.getElementById(a.getAttribute("data-sec"));
       if (section) spy.observe(section);
     });

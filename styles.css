@@ -583,34 +583,6 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   transform: scaleX(0); transform-origin: 0 50%;
 }
 
-/* Section rail, only where there is margin to spare beside the content */
-.rail { display: none; }
-@media (min-width: 1360px) {
-  .rail {
-    position: fixed; right: 2rem; top: 50%; transform: translateY(-50%);
-    z-index: 40; display: grid; gap: 1.1rem;
-  }
-}
-.rail a {
-  display: flex; align-items: center; justify-content: flex-end; gap: 0.7rem;
-  text-decoration: none; color: var(--faint);
-  font-size: var(--fs-label); font-weight: 600;
-  letter-spacing: 0.16em; text-transform: uppercase;
-  transition: color 0.3s var(--ease);
-}
-.rail a span {
-  opacity: 0; transform: translateX(8px);
-  transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
-}
-.rail a::after {
-  content: ""; width: 20px; height: 2px; background: currentColor;
-  transition: width 0.3s var(--ease);
-}
-.rail a:hover { color: var(--dim); }
-.rail a:hover span { opacity: 1; transform: none; }
-.rail a.is-active { color: var(--brass); }
-.rail a.is-active span { opacity: 1; transform: none; }
-.rail a.is-active::after { width: 36px; }
 
 .project { position: relative; }
 
@@ -1012,7 +984,6 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
    sentence are covered by the inline exception and are left alone. ------- */
 .nav a,
 .footer-gh,
-.rail a,
 .back-link {
   padding-block: 4px;
 }
