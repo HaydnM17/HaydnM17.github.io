@@ -57,8 +57,8 @@
   /* ---- Hero particle web -------------------------------------------------
      Drifting dots that are gathered in from a distance and then held in a
      ring orbiting the pointer, never landing on it. Straight hairlines link
-     the ones near each other, so the web forms around the cursor and fades
-     away behind it instead of hanging over the whole hero like a cobweb. */
+     dots to each other, never to the pointer, and no link is allowed to cross
+     the middle of the ring, so the cursor sits in open space. */
   (function () {
     var canvas = document.getElementById("hero-canvas");
     if (!canvas || !canvas.getContext) return;
@@ -74,8 +74,8 @@
     var TAPER = 32;    // spin eases off inside this, so the middle stays sane
     var ORBIT = 36;    // inside this they are pushed back out, so a ring holds
     var CLEAR = 500;   // px/s2 of that outward push at the very centre
-    var LINK = 118;    // two dots closer than this can be linked
-    var SPOKE = 155;   // dots closer than this link to the pointer itself
+    var LINK = 90;     // two dots closer than this can be linked
+    var GAP = 26;      // no link may pass this close to the pointer
 
     var cursor = { x: 0, y: 0, on: false };
     var glow = document.getElementById("hero-cursor");
@@ -171,28 +171,24 @@
           var alpha = (1 - d / LINK) * (0.045 + near * 0.42);
           if (alpha < 0.012) continue;
 
+          /* Dots opposite each other in the ring would otherwise be joined by
+             a line straight through the pointer. Drop any link that passes
+             within GAP of it, so the middle stays open. */
+          if (cursor.on) {
+            var vx = b.x - a.x, vy = b.y - a.y;
+            var along = ((cursor.x - a.x) * vx + (cursor.y - a.y) * vy) / d2;
+            along = along < 0 ? 0 : along > 1 ? 1 : along;
+            var gx = a.x + along * vx - cursor.x;
+            var gy = a.y + along * vy - cursor.y;
+            if (gx * gx + gy * gy < GAP * GAP) continue;
+          }
+
           ctx.strokeStyle = near > 0.3
             ? "rgba(229, 180, 87, " + alpha.toFixed(3) + ")"
             : "rgba(236, 241, 236, " + alpha.toFixed(3) + ")";
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
-          ctx.stroke();
-        }
-      }
-
-      /* spokes from the pointer to whatever is closest */
-      if (cursor.on) {
-        for (i = 0; i < dots.length; i++) {
-          a = dots[i];
-          dx = a.x - cursor.x;
-          dy = a.y - cursor.y;
-          d = Math.sqrt(dx * dx + dy * dy);
-          if (d > SPOKE) continue;
-          ctx.strokeStyle = "rgba(229, 180, 87, " + ((1 - d / SPOKE) * 0.30).toFixed(3) + ")";
-          ctx.beginPath();
-          ctx.moveTo(cursor.x, cursor.y);
-          ctx.lineTo(a.x, a.y);
           ctx.stroke();
         }
       }
