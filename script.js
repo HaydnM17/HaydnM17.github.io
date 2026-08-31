@@ -68,11 +68,12 @@
     var running = false, frame = 0, last = 0;
     var dots = [];
 
-    var REACH = 340;   // how far the pointer's influence carries
-    var DRAW = 200;    // px/s2 of inward pull, what gathers them in
-    var SWIRL = 245;   // px/s2 of rotation around the pointer
-    var ORBIT = 58;    // inside this they are pushed back out, so a ring holds
-    var CLEAR = 450;   // px/s2 of that outward push at the very centre
+    var REACH = 420;   // how far the pointer's influence carries
+    var DRAW = 1000;   // px/s2 of inward pull, what gathers them in
+    var SWIRL = 400;   // px/s2 of rotation around the pointer
+    var TAPER = 18;    // spin eases off inside this, so the middle stays sane
+    var ORBIT = 24;    // inside this they are pushed back out, so a ring holds
+    var CLEAR = 750;   // px/s2 of that outward push at the very centre
     var LINK = 118;    // two dots closer than this can be linked
     var SPOKE = 155;   // dots closer than this link to the pointer itself
 
@@ -129,7 +130,7 @@
             target = 1 - d / REACH;
             /* Sideways, which is what makes them go round rather than in. The
                taper stops the innermost ones whipping about at silly speed. */
-            var force = SWIRL * target * Math.min(d / 45, 1);
+            var force = SWIRL * target * Math.min(d / TAPER, 1);
             a.ivx += (-dy / d) * force * dt;
             a.ivy += (dx / d) * force * dt;
 
