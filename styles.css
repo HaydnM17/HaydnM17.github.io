@@ -296,9 +296,16 @@ a { color: inherit; }
 .project-media { overflow: hidden; background: var(--card); }
 .project-media img:not(.reel-page) { transition: transform 0.7s var(--ease); width: 100%; }
 /* scoped to the hovered image itself, so one shot moving never moves its neighbours */
-.zoom:hover img:not(.reel-page), .zoom:focus-visible img:not(.reel-page) { transform: scale(1.04); }
+.zoom:hover img:not(.reel-page):not(.reel-head),
+.zoom:focus-visible img:not(.reel-page):not(.reel-head) { transform: scale(1.04); }
+/* A preview is a stack of positioned images, so the lift belongs to the whole
+   device. Scaling one image inside it moved the pinned header on its own. */
+.zoom .device { transition: transform 0.7s var(--ease); }
+.zoom:hover .device, .zoom:focus-visible .device { transform: scale(1.025); }
 @media (prefers-reduced-motion: reduce) {
-  .zoom:hover img:not(.reel-page), .zoom:focus-visible img:not(.reel-page) { transform: none; }
+  .zoom:hover img:not(.reel-page):not(.reel-head),
+  .zoom:focus-visible img:not(.reel-page):not(.reel-head) { transform: none; }
+  .zoom:hover .device, .zoom:focus-visible .device { transform: none; }
 }
 .project-media-shots {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -654,38 +661,34 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 
 /* --- Portfolio teaser (home page) ----------------------------------------- */
 .teaser-lede { color: var(--dim); font-size: var(--fs-lg); max-width: 54ch; margin-top: 1.25rem; }
-/* Separate cards with room to breathe, rather than one ruled block. */
+/* One preview per row, big enough to actually read, with room between them. */
 .teaser-grid {
-  display: grid; gap: clamp(2.25rem, 5vw, 3.5rem);
+  display: grid; gap: clamp(3.5rem, 8vw, 6rem);
+  max-width: 900px; margin-inline: auto;
   margin-top: clamp(2.75rem, 5vw, 4.25rem);
-  margin-bottom: clamp(3rem, 6vw, 4.5rem);
+  margin-bottom: clamp(3.25rem, 6vw, 5rem);
 }
-@media (min-width: 760px) { .teaser-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .teaser {
   display: grid; gap: 0.4rem; align-content: start;
+  justify-items: center; text-align: center;
   text-decoration: none;
 }
 .teaser-name { transition: color 0.3s var(--ease); }
 .teaser:hover .teaser-name, .teaser:focus-visible .teaser-name { color: var(--brass); }
-/* One slot height across the row so the labels line up, with each device
-   centred in it at its own real proportions. The phone stands full height
-   rather than being cropped or squashed into a landscape box. */
+/* Devices sit at their own real proportions and share a baseline, so a phone
+   standing beside a browser lines up along the bottom. */
 .teaser-shot {
-  display: flex; align-items: center; justify-content: center;
-  margin-bottom: 1.15rem; aspect-ratio: 16 / 13;
+  display: flex; align-items: flex-end; justify-content: center;
+  width: 100%; margin-bottom: 1.4rem;
 }
 .teaser-shot .device-browser { width: 100%; aspect-ratio: 16 / 10; }
-.teaser-shot .device-phone { height: 100%; aspect-ratio: 422 / 966; }
-/* Stacked to one column there is room for a bigger phone. */
-@media (max-width: 759px) {
-  .teaser-shot { aspect-ratio: auto; height: 360px; }
-}
+.teaser-shot-phone .device-phone { width: min(280px, 62%); aspect-ratio: 422 / 966; }
 .teaser-meta {
   font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--brass);
 }
 .teaser-name { font-variation-settings: "wdth" 112; font-weight: 700; font-size: var(--fs-h3); }
-.teaser-cta { justify-self: start; }
+.teaser-cta { display: flex; width: max-content; margin-inline: auto; }
 
 /* --- Portfolio page ------------------------------------------------------- */
 .page-head { padding-block: clamp(3.5rem, 8vw, 6rem) clamp(2rem, 4vw, 3rem); position: relative; }
@@ -921,3 +924,9 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .reel-pair { display: flex; align-items: flex-end; gap: 4%; width: 100%; }
 .reel-pair .device-browser { flex: 1 1 auto; width: auto; aspect-ratio: 16 / 10; }
 .reel-pair .device-phone { flex: 0 0 27%; aspect-ratio: 422 / 966; }
+/* On a phone the browser needs the whole width to be legible, and the visitor
+   is already looking at the mobile view for real. */
+@media (max-width: 600px) {
+  .reel-pair { gap: 0; }
+  .reel-pair .device-phone { display: none; }
+}
