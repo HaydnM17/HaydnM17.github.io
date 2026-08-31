@@ -67,6 +67,12 @@ Notes that cost time to rediscover:
 These came from direct feedback. Do not reintroduce them.
 
 - Never say the site is "written by hand" or "built by hand". It is untrue.
+- No claims about what Haydn likes, enjoys or prefers. "I like taking a thing end
+  to end" was cut for this. Write what he does and what a client gets, not his
+  character.
+- Do not write that something is "built around what a business actually does" or
+  "picked off a shelf and recoloured" in the bio. Say fully customized and made
+  for exactly what they need.
 - No em dashes anywhere. He reads them as an AI tell. Use commas and periods.
 - No "Solo build" or role breakdown on solo projects. Movement Unlimited keeps
   "Project lead" because it was a team of five.
