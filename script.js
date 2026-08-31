@@ -465,7 +465,11 @@
           }
         });
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.05 }
+      /* Positive bottom margin fires the reveal while the element is still
+         below the fold, so by the time it scrolls into view it has already
+         played. A negative one waited until it was well inside the viewport,
+         which read as the section loading late. */
+      { rootMargin: "0px 0px 22% 0px", threshold: 0 }
     );
     document.querySelectorAll(".reveal, .head-anim, .bolt-rule").forEach(function (el) { io.observe(el); });
   } else {

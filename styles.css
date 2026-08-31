@@ -640,7 +640,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .reveal { opacity: 0; transform: translateY(26px); }
 .reveal.is-in {
   opacity: 1; transform: none;
-  transition: opacity 0.7s var(--ease) var(--d, 0ms), transform 0.7s var(--ease) var(--d, 0ms);
+  transition: opacity 0.5s var(--ease) var(--d, 0ms), transform 0.5s var(--ease) var(--d, 0ms);
 }
 @media (prefers-reduced-motion: reduce) {
   .reveal, .reveal.is-in { opacity: 1; transform: none; transition: none; }
