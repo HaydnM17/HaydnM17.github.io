@@ -25,6 +25,7 @@
   --section-y: clamp(4.5rem, 10vw, 9rem);
 
   --sans: "Archivo", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
 
   --fs-label: 0.75rem;
   --fs-sm:    0.9rem;
@@ -601,15 +602,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .rail a.is-active span { opacity: 1; transform: none; }
 .rail a.is-active::after { width: 36px; }
 
-/* Cursor spotlight on cards */
 .project { position: relative; }
-.project::before, .layer::before {
-  content: ""; position: absolute; inset: 0; pointer-events: none;
-  background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
-              rgba(229, 180, 87, 0.07), transparent 68%);
-  opacity: 0; transition: opacity 0.35s var(--ease);
-}
-.project:hover::before, .layer:hover::before { opacity: 1; }
 
 /* Sheen across the primary buttons */
 .btn-primary { position: relative; overflow: hidden; }
@@ -654,12 +647,16 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 
 /* --- Portfolio teaser (home page) ----------------------------------------- */
 .teaser-lede { color: var(--dim); font-size: var(--fs-lg); max-width: 54ch; margin-top: 1.25rem; }
-/* One preview per row, big enough to actually read, with room between them. */
+/* Three across on a wide screen. These are a glance at the work with the real
+   detail a click away, so they stay a row rather than a stack that eats the
+   page. They fall to one column only when the screen cannot hold three. */
 .teaser-grid {
-  display: grid; gap: clamp(3.5rem, 8vw, 6rem);
-  max-width: 900px; margin-inline: auto;
-  margin-top: clamp(2.75rem, 5vw, 4.25rem);
-  margin-bottom: clamp(3.25rem, 6vw, 5rem);
+  display: grid; gap: clamp(2rem, 4vw, 3rem);
+  margin-top: clamp(2.5rem, 4.5vw, 3.5rem);
+  margin-bottom: clamp(2.75rem, 5vw, 4rem);
+}
+@media (min-width: 760px) {
+  .teaser-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 .teaser {
   display: grid; gap: 0.4rem; align-content: start;
@@ -670,12 +667,21 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .teaser:hover .teaser-name, .teaser:focus-visible .teaser-name { color: var(--brass); }
 /* Devices sit at their own real proportions and share a baseline, so a phone
    standing beside a browser lines up along the bottom. */
+/* Every shot box is the same shape, and the device inside is sized by height
+   rather than width. A phone is more than twice as tall as a browser at the
+   same width, so sizing by width left it hanging far below the others and the
+   three names no longer lined up across the row. */
 .teaser-shot {
   display: flex; align-items: flex-end; justify-content: center;
-  width: 100%; margin-bottom: 1.4rem;
+  width: 100%; aspect-ratio: 16 / 10; margin-bottom: 1.4rem;
 }
-.teaser-shot .device-browser { width: 100%; aspect-ratio: 16 / 10; }
-.teaser-shot-phone .device-phone { width: min(280px, 62%); aspect-ratio: 422 / 966; }
+.teaser-shot .device-browser { width: 100%; height: 100%; aspect-ratio: 16 / 10; }
+.teaser-shot-phone .device-phone { width: auto; height: 100%; aspect-ratio: 422 / 966; }
+/* A third of the row is not enough for a phone standing beside a browser, and
+   the browser is the one carrying the content. The pair stays intact on the
+   portfolio page, where it has the width for it. */
+.teaser-shot .reel-pair { gap: 0; }
+.teaser-shot .reel-pair .device-phone { display: none; }
 .teaser-meta {
   font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--brass);
@@ -940,3 +946,62 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   .zoom:hover .device { transform: scale(1.025); }
   .layer:hover::after { transform: scaleY(1); }
 }
+
+/* --- System labels ---------------------------------------------------------
+   Every small uppercase label is mono. Against Archivo headings they read as
+   instrument markings rather than more of the same voice, which is what makes
+   the page feel measured instead of merely dark. Mono glyphs are wider, so the
+   size comes down a notch and the tracking loosens slightly. -------------- */
+.eyebrow,
+.hero-eyebrow,
+.project-meta,
+.teaser-meta,
+.facts dt,
+.case-role dt,
+.skill-group h3,
+.field label,
+.tags li,
+.device-bar b {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+.hero-eyebrow { letter-spacing: 0.24em; }
+.tags li { text-transform: none; letter-spacing: 0.02em; }
+
+/* --- Container guides -----------------------------------------------------
+   Thin rules on the content edges with a tick at each section boundary, so the
+   measure of the page is visible rather than implied. Decorative only: behind
+   the content, and never in the way of a pointer. Dropped on narrow screens,
+   where the lines would sit on the screen edge and read as a border. ----- */
+@media (min-width: 860px) {
+  .section > .wrap { position: relative; }
+  .section > .wrap::before,
+  .section > .wrap::after {
+    content: "";
+    position: absolute; top: calc(var(--section-y) * -1); bottom: calc(var(--section-y) * -1);
+    width: 5px; pointer-events: none; z-index: 0;
+    /* A hairline down the content edge, with a tick where each section starts.
+       The element is 5px wide only so the tick has room; the line itself is the
+       1px band centred in it. */
+    background:
+      linear-gradient(var(--line-int), var(--line-int)) 0 0 / 5px 5px no-repeat,
+      linear-gradient(var(--line), var(--line)) 2px 0 / 1px 100% no-repeat;
+  }
+  .section > .wrap::before { left: calc(var(--gutter) - 3px); }
+  .section > .wrap::after { right: calc(var(--gutter) - 3px); }
+  .section > .wrap > * { position: relative; z-index: 1; }
+}
+
+/* --- Hit areas -------------------------------------------------------------
+   WCAG 2.5.8 asks for 24x24 CSS pixels on a standalone control. These links
+   sat a pixel or two under on height, so the padding brings them up without
+   moving anything: the extra sits inside existing flex gaps. Links inside a
+   sentence are covered by the inline exception and are left alone. ------- */
+.nav a,
+.footer-gh,
+.rail a,
+.back-link {
+  padding-block: 4px;
+}
+.nav { align-items: center; }

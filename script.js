@@ -444,17 +444,6 @@
     });
   })();
 
-  /* ---- Cursor spotlight on cards ----------------------------------------- */
-  if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
-    document.querySelectorAll(".project, .layer").forEach(function (card) {
-      card.addEventListener("pointermove", function (e) {
-        var rect = card.getBoundingClientRect();
-        card.style.setProperty("--mx", ((e.clientX - rect.left) / rect.width) * 100 + "%");
-        card.style.setProperty("--my", ((e.clientY - rect.top) / rect.height) * 100 + "%");
-      }, { passive: true });
-    });
-  }
-
   /* ---- Scroll reveals --------------------------------------------------- */
   if ("IntersectionObserver" in window) {
     var io = new IntersectionObserver(
