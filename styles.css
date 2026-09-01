@@ -1003,9 +1003,25 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .project-media-strip { background: none; overflow: visible; }
 /* write-up first at every width, pictures after it */
 .project-strip .project-media { order: 2; }
-@media (min-width: 900px) {
+@media (min-width: 900px) and (max-width: 1099px) {
+  /* Two columns here would leave the carousel too narrow to read, so the
+     pictures keep the full width and sit under the write-up. */
   .project-strip { grid-template-columns: 1fr; align-items: start; }
   .project-strip .project-body { max-width: 640px; }
+}
+@media (min-width: 1100px) {
+  /* Beside the write-up, the same shape as the site project above, instead of
+     stacked underneath it. The pictures take the wider share because a
+     carousel has to show the neighbours either side of the focused capture. */
+  .project-strip {
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: center;
+  }
+  .project-strip .project-body { max-width: 44ch; }
+  /* Bigger cells than the full-width strip uses, so narrowing the column does
+     not shrink the focused capture along with it. */
+  .project-strip .strip { --cellw: 68cqi; }
+  .project-strip .strip-phone { --cellw: 34cqi; }
 }
 
 /* Cell widths in container units of the view, because a percentage

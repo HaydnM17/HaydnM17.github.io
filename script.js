@@ -813,7 +813,8 @@
   if (!strips.length) return;
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
-  var DRIFT = 14; /* px per second: slow enough to read, fast enough to notice */
+  var DRIFT = 40; /* px per second: about ten seconds a picture, so the motion
+                     reads as motion straight away rather than as a still */
 
   Array.prototype.forEach.call(strips, function (strip) {
     var view = strip.querySelector(".strip-view");
@@ -825,15 +826,19 @@
     var originals = Array.prototype.slice.call(track.children);
     if (originals.length < 2) return;
 
-    /* One duplicate set is enough to cover any viewport wider than the set,
-       because the jump happens at exactly one set width. */
-    originals.forEach(function (cell) {
-      var copy = cell.cloneNode(true);
-      copy.setAttribute("aria-hidden", "true");
-      copy.setAttribute("tabindex", "-1");
-      copy.classList.add("is-clone");
-      track.appendChild(copy);
-    });
+    /* Three sets, with the drift held in the middle one, so there is always a
+       whole set of pictures laid out to the left and to the right of the view.
+       Two sets left a hole on the left every time the position wrapped back to
+       the start, because nothing existed before the first cell. */
+    for (var copies = 0; copies < 2; copies++) {
+      originals.forEach(function (cell) {
+        var copy = cell.cloneNode(true);
+        copy.setAttribute("aria-hidden", "true");
+        copy.setAttribute("tabindex", "-1");
+        copy.classList.add("is-clone");
+        track.appendChild(copy);
+      });
+    }
 
     var cells = Array.prototype.slice.call(track.children);
     var setWidth = 0;
@@ -849,11 +854,22 @@
        something else moves the strip, so the next frame re-reads it. */
     var pos = null;
 
+    /* Held inside the middle set. The jump is invisible because the pixels a
+       whole set apart are identical. */
     var wrap = function () {
       if (setWidth <= 0) return;
       if (pos === null) pos = view.scrollLeft;
-      if (pos >= setWidth) pos -= setWidth;
-      else if (pos < 0) pos += setWidth;
+      if (pos >= setWidth * 2) pos -= setWidth;
+      else if (pos < setWidth) pos += setWidth;
+      view.scrollLeft = pos;
+    };
+
+    /* Move the strip into the middle set from wherever it sits, so it opens
+       with pictures on both sides instead of flush against nothing. */
+    var normalise = function () {
+      if (setWidth <= 0) return;
+      var p = pos === null ? view.scrollLeft : pos;
+      pos = setWidth + (((p % setWidth) + setWidth) % setWidth);
       view.scrollLeft = pos;
     };
 
@@ -942,6 +958,7 @@
 
     var settle = function () {
       measure();
+      normalise();
       if (reduced.matches) {
         cells.forEach(function (cell) {
           cell.style.transform = ""; cell.style.opacity = "";
