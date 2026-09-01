@@ -1011,16 +1011,18 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 }
 @media (min-width: 1100px) {
   /* Beside the write-up, the same shape as the site project above, instead of
-     stacked underneath it. The pictures take the wider share because a
-     carousel has to show the neighbours either side of the focused capture. */
+     stacked underneath it. The pictures take the wider share because the view
+     has to hold three captures: the one in the middle, the end of the one
+     before it, and the start of the next. */
   .project-strip {
-    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    grid-template-columns: minmax(0, 0.68fr) minmax(0, 1.32fr);
     align-items: center;
   }
   .project-strip .project-body { max-width: 44ch; }
-  /* Bigger cells than the full-width strip uses, so narrowing the column does
-     not shrink the focused capture along with it. */
-  .project-strip .strip { --cellw: 76cqi; }
+  /* Sized so a capture either side reaches well into the view rather than
+     showing as a sliver. Wider than this and the neighbours disappear behind
+     the fade at the ends. */
+  .project-strip .strip { --cellw: 60cqi; }
   .project-strip .strip-phone { --cellw: 36cqi; }
 }
 
@@ -1032,7 +1034,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .strip { position: relative; --cellw: 58cqi; --screen-bg: #F4F5F7; }
 .strip-phone { --cellw: 27cqi; --screen-bg: #000; }
 @media (max-width: 900px) {
-  .strip { --cellw: 74cqi; }
+  .strip { --cellw: 62cqi; }
   .strip-phone { --cellw: 44cqi; }
 }
 @media (max-width: 560px) {
@@ -1077,7 +1079,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   /* Wide enough that the shortest captures, the Dashboard, Staff Accounts and
      the two Admin Setup pages, run out only a little short of the bottom, and
      what shows there is the page's own colour rather than a black band. */
-  aspect-ratio: var(--cell, 8 / 5);
+  aspect-ratio: var(--cell, 3 / 2);
   border: 1px solid var(--line);
   /* the colour the captured page itself ends in, so a short one runs out into
      its own background instead of a black band */
