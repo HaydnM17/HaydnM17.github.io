@@ -1014,27 +1014,29 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
      stacked underneath it. The pictures take the wider share because a
      carousel has to show the neighbours either side of the focused capture. */
   .project-strip {
-    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
     align-items: center;
   }
   .project-strip .project-body { max-width: 44ch; }
   /* Bigger cells than the full-width strip uses, so narrowing the column does
      not shrink the focused capture along with it. */
-  .project-strip .strip { --cellw: 68cqi; }
-  .project-strip .strip-phone { --cellw: 34cqi; }
+  .project-strip .strip { --cellw: 76cqi; }
+  .project-strip .strip-phone { --cellw: 36cqi; }
 }
 
 /* Cell widths in container units of the view, because a percentage
    flex-basis resolves against the track, whose content box the centring
    padding has already eaten. cqi always means the view. */
-.strip { position: relative; --cellw: 58cqi; }
-.strip-phone { --cellw: 27cqi; }
+/* Each strip says what colour its captures end in, so a page shorter than the
+   cell runs out into its own background rather than the dark card. */
+.strip { position: relative; --cellw: 58cqi; --screen-bg: #F4F5F7; }
+.strip-phone { --cellw: 27cqi; --screen-bg: #000; }
 @media (max-width: 900px) {
   .strip { --cellw: 74cqi; }
   .strip-phone { --cellw: 44cqi; }
 }
 @media (max-width: 560px) {
-  .strip { --cellw: 86cqi; }
+  .strip { --cellw: 82cqi; }
   .strip-phone { --cellw: 60cqi; }
 }
 
@@ -1048,8 +1050,21 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   overscroll-behavior-x: contain;
   /* headroom so the focused cell can stand proud without clipping */
   padding-block: 0.6rem;
+  /* Captures dissolve at both ends instead of being cut off by the edge of
+     the scroller, so one fades out as it leaves and the next fades in as it
+     arrives. The arrows sit outside this box, so they stay solid. */
+  --edge: 2rem;
+  -webkit-mask-image: linear-gradient(to right, transparent 0, #000 var(--edge), #000 calc(100% - var(--edge)), transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0, #000 var(--edge), #000 calc(100% - var(--edge)), transparent 100%);
 }
 .strip-view::-webkit-scrollbar { display: none; }
+/* A phone leaves only a narrow margin either side of the focused capture, so
+   the fade has to be narrower too or it would reach onto the capture itself.
+   This has to sit after the rule above: same specificity, so source order is
+   what decides it. */
+@media (max-width: 560px) {
+  .strip-view { --edge: 1.25rem; }
+}
 .strip-track {
   display: flex; gap: 1rem;
   /* lets the first and last capture reach the centre */
@@ -1059,8 +1074,14 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   flex: 0 0 var(--cellw);
   will-change: transform;
   display: block; overflow: hidden; padding: 0;
-  aspect-ratio: var(--cell, 16 / 11);
-  border: 1px solid var(--line); background: var(--card);
+  /* Wide enough that the shortest captures, the Dashboard, Staff Accounts and
+     the two Admin Setup pages, run out only a little short of the bottom, and
+     what shows there is the page's own colour rather than a black band. */
+  aspect-ratio: var(--cell, 8 / 5);
+  border: 1px solid var(--line);
+  /* the colour the captured page itself ends in, so a short one runs out into
+     its own background instead of a black band */
+  background: var(--screen-bg, var(--card));
   cursor: pointer;
   transition: border-color 0.25s var(--ease);
 }

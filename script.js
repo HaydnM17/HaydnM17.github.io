@@ -879,9 +879,17 @@
       var mid = view.scrollLeft + view.clientWidth / 2;
       var span = view.clientWidth;
       cells.forEach(function (cell) {
-        var d = Math.abs(cell.offsetLeft + cell.offsetWidth / 2 - mid) / span;
+        var off = cell.offsetLeft + cell.offsetWidth / 2 - mid;
+        var d = Math.abs(off) / span;
         var scale = Math.max(0.84, 1 - d * 0.38);
         var fade = Math.max(0.38, 1 - d * 1.5);
+        /* Shrink towards the middle of the strip rather than towards each
+           cell's own centre, which dragged the ones at the sides further out
+           of the view and left barely a sliver of them showing. Sliding the
+           origin across keeps it continuous: a cell passing the middle would
+           otherwise jump the width of its own scale. */
+        var t = Math.max(-1, Math.min(1, off / (span * 0.5)));
+        cell.style.transformOrigin = (50 - t * 50).toFixed(1) + "% 50%";
         cell.style.transform = "scale(" + scale.toFixed(3) + ")";
         cell.style.opacity = fade.toFixed(3);
         cell.classList.toggle("is-focus", d < 0.14);
