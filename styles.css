@@ -956,7 +956,6 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   .btn-primary:hover, .btn-ghost:hover { transform: translateY(-2px); }
   .btn-primary:hover::after { transform: translateX(270%) skewX(-18deg); }
   .zoom:not(.strip-item):hover img:not(.reel-page):not(.reel-head) { transform: scale(1.04); }
-  .zoom.strip-item:hover { transform: translateY(-4px); }
   .zoom:hover .device { transform: scale(1.025); }
   .layer:hover::after { transform: scaleY(1); }
 }
@@ -994,17 +993,13 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   padding-block: 4px;
 }
 .nav { align-items: center; }
-
-/* --- Screenshot strips (portfolio) ----------------------------------------
-   Every capture of a project on the page at once, a few at a time, paged with
-   the arrows or swiped directly. The view is a native scroller with the
-   scrollbar hidden, so it stays touchable and keyboard-scrollable, and every
-   cell is the same .zoom button the lightbox already listens to. A cell that
-   shows a page taller than itself crops from the top, exactly like a browser
+/* --- Screenshot carousels (portfolio) -------------------------------------
+   One capture holds the middle at full size; the rest sit further back,
+   smaller and dimmer, and slide forward into focus as the strip moves. The
+   view is a native scroller with centre snap points, the depth comes from
+   scroll position in script.js, and the big end arrows step one picture at a
+   time. Cells taller than their box crop from the top, exactly like a browser
    showing the top of that page. */
-/* A filmstrip project runs the write-up on top and the strip across the full
-   column width underneath, so the captures get real size instead of being
-   crushed into half a row beside the text. */
 .project-media-strip { background: none; overflow: visible; }
 /* write-up first at every width, pictures after it */
 .project-strip .project-media { order: 2; }
@@ -1013,53 +1008,69 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   .project-strip .project-body { max-width: 640px; }
 }
 
-.strip { display: grid; gap: 0.85rem; }
-/* arrows sit above the pictures, where the eye lands first */
-.strip-nav { order: -1; }
+/* Cell widths in container units of the view, because a percentage
+   flex-basis resolves against the track, whose content box the centring
+   padding has already eaten. cqi always means the view. */
+.strip { position: relative; --cellw: 58cqi; }
+.strip-phone { --cellw: 27cqi; }
+@media (max-width: 900px) {
+  .strip { --cellw: 74cqi; }
+  .strip-phone { --cellw: 44cqi; }
+}
+@media (max-width: 560px) {
+  .strip { --cellw: 86cqi; }
+  .strip-phone { --cellw: 60cqi; }
+}
+
 .strip-view {
+  container-type: inline-size;
   overflow-x: auto;
-  /* proximity rather than mandatory: a mandatory snap cannot rest at the far
-     end unless a cell begins exactly there, so the last page kept bouncing
-     back and the next arrow could never disable */
-  scroll-snap-type: x proximity;
+  scroll-snap-type: x mandatory;
   scrollbar-width: none;
   /* a trackpad swipe past the end stays on the page instead of going back */
   overscroll-behavior-x: contain;
+  /* headroom so the focused cell can stand proud without clipping */
+  padding-block: 0.6rem;
 }
 .strip-view::-webkit-scrollbar { display: none; }
-.strip-track { display: flex; gap: 0.6rem; }
+.strip-track {
+  display: flex; gap: 1rem;
+  /* lets the first and last capture reach the centre */
+  padding-inline: calc((100cqi - var(--cellw)) / 2);
+}
 .strip-item {
-  flex: 0 0 calc((100% - 1.2rem) / 3);
-  scroll-snap-align: start;
+  flex: 0 0 var(--cellw);
+  scroll-snap-align: center;
   display: block; overflow: hidden; padding: 0;
   aspect-ratio: var(--cell, 16 / 11);
   border: 1px solid var(--line); background: var(--card);
   cursor: pointer;
-  transition: border-color 0.2s var(--ease), transform 0.2s ease;
+  transition: border-color 0.25s var(--ease);
 }
+.strip-item.is-focus { border-color: var(--line-2); }
 .strip-item:hover, .strip-item:focus-visible { border-color: var(--line-int); }
 .strip-item img { display: block; width: 100%; height: auto; }
-/* Portrait cells fit four across where landscape pages fit three. */
-.strip-phone .strip-item { --cell: 540 / 1200; flex-basis: calc((100% - 1.8rem) / 4); }
-@media (max-width: 900px) {
-  .strip-item { flex-basis: calc((100% - 0.6rem) / 2); }
-  .strip-phone .strip-item { flex-basis: calc((100% - 1.2rem) / 3); }
-}
-@media (max-width: 560px) {
-  .strip-item { flex-basis: 78%; }
-  .strip-phone .strip-item { flex-basis: calc((100% - 0.6rem) / 2); }
-}
+.strip-phone .strip-item { --cell: 540 / 1200; }
 
-.strip-nav { display: flex; gap: 0.5rem; justify-content: flex-end; }
-.strip-btn {
-  width: 44px; height: 44px;
+/* Big bare chevrons at either end, floating over the dimmed edge cells. */
+.strip-arrow {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  z-index: 3;
+  width: 56px; height: 72px;
   display: grid; place-items: center;
-  background: none; border: 1px solid var(--line-int); color: var(--chalk);
-  font-size: 1.05rem; line-height: 1; cursor: pointer;
-  transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+  padding: 0; border: 0; background: none;
+  color: var(--dim); cursor: pointer;
+  transition: color 0.2s var(--ease), opacity 0.2s var(--ease);
 }
-.strip-btn:hover:not(:disabled),
-.strip-btn:focus-visible { border-color: var(--brass); color: var(--brass); }
-.strip-btn:disabled { opacity: 0.35; cursor: default; }
-/* a strip whose pictures already all fit needs no paging at all */
-.strip-static .strip-nav { display: none; }
+.strip-arrow svg { width: 34px; height: 34px; display: block; }
+.strip-arrow:hover:not(:disabled),
+.strip-arrow:focus-visible { color: var(--brass); }
+.strip-arrow:disabled { opacity: 0.22; cursor: default; }
+.strip-prev { left: clamp(-0.5rem, -1vw, 0rem); }
+.strip-next { right: clamp(-0.5rem, -1vw, 0rem); }
+
+/* The site preview on this page is the animated pair, same as the home page,
+   at a size that fits the column. It is not a button: the full pages are far
+   too tall to be worth a lightbox. */
+.project-media-pair { background: none; overflow: visible; }
+.project-media-pair .reel-pair { max-width: 880px; }

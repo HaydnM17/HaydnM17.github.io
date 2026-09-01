@@ -791,14 +791,16 @@
     resizeTimer = window.setTimeout(resyncAll, 250);
   }, { passive: true });
 })();
+/* ---- Screenshot carousels (portfolio) ------------------------------------
+   One capture holds the middle at full size; its neighbours sit further back,
+   smaller and dimmer, and trade places with it as the strip moves. The view is
+   a native scroller with centre snap points, so touch and trackpad work as
+   they always do, and the big end arrows step the focus one picture at a
+   time. The depth is painted from scroll position on the compositor's clock:
+   scale and opacity only, nothing that lays out.
 
-/* ---- Screenshot strips (portfolio) ---------------------------------------
-   Every capture of a project, three or so at a time, paged with the arrows or
-   swiped directly: the view is a native horizontal scroller with snap points,
-   so the browser supplies the motion, the interruption handling and the touch
-   behaviour, and the arrows just drive it. Smooth paging steps aside under
-   reduced motion. Each cell is still a .zoom button, so the lightbox works on
-   every picture. */
+   Under reduced motion the depth treatment is dropped entirely: every cell
+   sits flat and full strength, and the arrows jump instead of gliding. */
 (function () {
   var strips = document.querySelectorAll("[data-strip]");
   if (!strips.length) return;
@@ -807,34 +809,84 @@
 
   Array.prototype.forEach.call(strips, function (strip) {
     var view = strip.querySelector(".strip-view");
+    var cells = Array.prototype.slice.call(strip.querySelectorAll(".strip-item"));
     var prev = strip.querySelector(".strip-prev");
     var next = strip.querySelector(".strip-next");
-    if (!view || !prev || !next) return;
+    if (!view || !cells.length || !prev || !next) return;
 
-    var page = function (dir) {
-      view.scrollBy({
-        left: dir * view.clientWidth * 0.92,
+    var centreOf = function (cell) {
+      return cell.offsetLeft + cell.offsetWidth / 2 - view.clientWidth / 2;
+    };
+
+    var focusedIndex = function () {
+      var mid = view.scrollLeft + view.clientWidth / 2;
+      var best = 0, dist = Infinity;
+      cells.forEach(function (cell, i) {
+        var d = Math.abs(cell.offsetLeft + cell.offsetWidth / 2 - mid);
+        if (d < dist) { dist = d; best = i; }
+      });
+      return best;
+    };
+
+    /* Depth: each cell shrinks and dims by how far it sits from the middle.
+       Painted at most once a frame, and not at all under reduced motion. */
+    var painting = false;
+    var paint = function () {
+      painting = false;
+      var mid = view.scrollLeft + view.clientWidth / 2;
+      var span = view.clientWidth;
+      cells.forEach(function (cell) {
+        var d = Math.abs(cell.offsetLeft + cell.offsetWidth / 2 - mid) / span;
+        var scale = Math.max(0.84, 1 - d * 0.38);
+        var fade = Math.max(0.38, 1 - d * 1.5);
+        cell.style.transform = "scale(" + scale.toFixed(3) + ")";
+        cell.style.opacity = fade.toFixed(3);
+        cell.classList.toggle("is-focus", d < 0.18);
+      });
+    };
+    var requestPaint = function () {
+      if (reduced.matches) return;
+      if (!painting) { painting = true; window.requestAnimationFrame(paint); }
+    };
+
+    var syncArrows = function () {
+      var i = focusedIndex();
+      prev.disabled = i <= 0;
+      next.disabled = i >= cells.length - 1;
+    };
+
+    var step = function (dir) {
+      var target = cells[Math.min(cells.length - 1, Math.max(0, focusedIndex() + dir))];
+      view.scrollTo({
+        left: centreOf(target),
         behavior: reduced.matches ? "auto" : "smooth"
       });
-      /* The scroll listener keeps the arrows honest during a swipe, but a
-         smooth scroll settles on its own time, so check again after the ride
-         as well rather than trusting the last event to arrive. */
-      window.setTimeout(sync, 250);
-      window.setTimeout(sync, 800);
+      window.setTimeout(syncArrows, 260);
+      window.setTimeout(syncArrows, 800);
     };
-    prev.addEventListener("click", function () { page(-1); });
-    next.addEventListener("click", function () { page(1); });
+    prev.addEventListener("click", function () { step(-1); });
+    next.addEventListener("click", function () { step(1); });
 
-    /* The arrows grey out at the ends, and disappear entirely on a strip
-       whose pictures already all fit. */
-    var sync = function () {
-      var max = view.scrollWidth - view.clientWidth;
-      prev.disabled = view.scrollLeft < 2;
-      next.disabled = view.scrollLeft > max - 2;
-      strip.classList.toggle("strip-static", max < 4);
+    view.addEventListener("scroll", function () { requestPaint(); syncArrows(); }, { passive: true });
+
+    var settle = function () {
+      /* start on the first capture, arrows and depth agreeing with it */
+      if (reduced.matches) {
+        cells.forEach(function (cell) {
+          cell.style.transform = ""; cell.style.opacity = "";
+          cell.classList.add("is-focus");
+        });
+      } else {
+        paint();
+      }
+      syncArrows();
     };
-    view.addEventListener("scroll", sync, { passive: true });
-    window.addEventListener("resize", sync, { passive: true });
-    sync();
+    window.addEventListener("resize", function () {
+      window.setTimeout(settle, 120);
+    }, { passive: true });
+    if (typeof reduced.addEventListener === "function") {
+      reduced.addEventListener("change", settle);
+    }
+    settle();
   });
 })();
