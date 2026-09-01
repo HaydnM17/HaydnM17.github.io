@@ -659,7 +659,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   width: 100%; aspect-ratio: 16 / 10; margin-bottom: 1.4rem;
 }
 .teaser-shot .device-browser { width: 100%; height: 100%; aspect-ratio: 16 / 10; }
-.teaser-shot-phone .device-phone { width: auto; height: 100%; aspect-ratio: 422 / 966; }
+.teaser-shot-phone .device-phone { width: auto; height: 100%; aspect-ratio: 1080 / 2400; }
 /* A pair inside a teaser: the phone takes the full height of the box and the
    browser takes whatever width is left, so both fit a third of the row and
    still sit on the same baseline. Sizing the browser by width instead would
@@ -908,7 +908,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
    across a landscape slot. */
 .project-media .device-browser { width: 100%; aspect-ratio: 16 / 10; }
 .project-media-phone { background: none; overflow: visible; display: flex; justify-content: center; }
-.project-media-phone .device-phone { width: min(300px, 80%); height: auto; aspect-ratio: 422 / 966; }
+.project-media-phone .device-phone { width: min(300px, 80%); height: auto; aspect-ratio: 1080 / 2400; }
 .project-media .zoom { display: block; width: 100%; }
 
 /* A site shown on both screens at once. The phone runs the same two pages as

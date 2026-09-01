@@ -697,6 +697,15 @@
       return;
     }
 
+    /* A slide can ask for its own dwell. A run of frames that differ by one
+       ticked checkbox reads as the action happening, not as a slideshow, but
+       only if they come through quickly. */
+    var hold = parseInt(slide.getAttribute("data-hold"), 10);
+    if (hold > 0) {
+      this.wait(hold, function () { self.advance(); });
+      return;
+    }
+
     this.wait(HOLD_TOP, function () {
       if (distance > self.screen.clientHeight * SCROLL_MIN) {
         self.scroll(slide, distance, function () { self.rest(slide); });
