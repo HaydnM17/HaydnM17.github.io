@@ -833,7 +833,10 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 
 .device-screen {
   position: absolute; inset: var(--bar, 0) 0 0; overflow: hidden;
-  background: var(--ground);
+  /* Falls back to the site ground. A frame showing a light application sets
+     its own, so a page shorter than the frame ends in the colour that page
+     actually has, rather than a black band. */
+  background: var(--screen-bg, var(--ground));
 }
 /* Slides stack in the same box and cross fade. Inside one, the header is
    pinned the way a real sticky header is and the page scrolls under it. */
@@ -842,14 +845,20 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   opacity: 0; transition: opacity 0.5s var(--ease);
 }
 .reel-slide.is-live { opacity: 1; }
+/* Both sit in normal flow, so the page starts below the header exactly as it
+   does on the real page. Absolutely positioning them both put the top of the
+   page behind the header, which only looked right once it had scrolled.
+   Transforming the page does not move the header, so the header stays put and
+   the page slides under it. */
 .reel-head {
-  position: absolute; inset: 0 0 auto; z-index: 2;
+  position: relative; z-index: 2;
   width: 100%; height: auto; display: block;
 }
 /* Height is auto so a tall capture keeps its own aspect and overflows
    downward, which is exactly the overflow the script scrolls through. */
 .reel-page {
-  position: absolute; inset: 0 0 auto; width: 100%; height: auto; display: block;
+  position: relative; z-index: 1;
+  width: 100%; height: auto; display: block;
 }
 .reel-slide.is-live .reel-page { will-change: transform; }
 
