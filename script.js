@@ -347,15 +347,17 @@
       if (dialog.open) dialog.close();
     };
 
-    document.querySelectorAll(".zoom").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        /* On an animated preview, blow up the page that is actually showing.
-           On a strip cell that stacks a header over a page, blow up the page. */
-        var img = btn.querySelector(".reel-slide.is-live .reel-page") ||
-                  btn.querySelector(".strip-main") ||
-                  btn.querySelector("img");
-        if (img) open(img);
-      });
+    /* Delegated, so a cell cloned into a carousel after this runs still opens
+       the lightbox. Binding each button directly missed every clone. */
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest ? e.target.closest(".zoom") : null;
+      if (!btn) return;
+      /* On an animated preview, blow up the page that is actually showing.
+         On a strip cell that stacks a header over a page, blow up the page. */
+      var img = btn.querySelector(".reel-slide.is-live .reel-page") ||
+                btn.querySelector(".strip-main") ||
+                btn.querySelector("img");
+      if (img) open(img);
     });
 
     close.addEventListener("click", shut);
@@ -791,48 +793,73 @@
     resizeTimer = window.setTimeout(resyncAll, 250);
   }, { passive: true });
 })();
-/* ---- Screenshot carousels (portfolio) ------------------------------------
-   One capture holds the middle at full size; its neighbours sit further back,
-   smaller and dimmer, and trade places with it as the strip moves. The view is
-   a native scroller with centre snap points, so touch and trackpad work as
-   they always do, and the big end arrows step the focus one picture at a
-   time. The depth is painted from scroll position on the compositor's clock:
-   scale and opacity only, nothing that lays out.
 
-   Under reduced motion the depth treatment is dropped entirely: every cell
-   sits flat and full strength, and the arrows jump instead of gliding. */
+/* ---- Screenshot carousels (portfolio) ------------------------------------
+   A slow endless drift. One capture holds the middle at full size; the rest
+   sit further back, smaller and dimmer, and slide forward into focus as the
+   strip moves. The cells are cloned once so the run repeats seamlessly: when
+   the scroll passes the end of the first set the position jumps back by
+   exactly one set width, which is invisible because the pixels either side of
+   the seam are identical, and it means there is no last picture that cannot
+   reach the middle.
+
+   The drift runs on scroll position rather than a transform, so a swipe, a
+   trackpad and the arrows all share one coordinate system. It pauses on
+   hover, on focus, while a pointer is down, when the tab is hidden and when
+   the carousel is off screen, and it does not run at all under reduced
+   motion, where the strip is a plain scroller with working arrows. */
 (function () {
   var strips = document.querySelectorAll("[data-strip]");
   if (!strips.length) return;
 
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+  var DRIFT = 14; /* px per second: slow enough to read, fast enough to notice */
 
   Array.prototype.forEach.call(strips, function (strip) {
     var view = strip.querySelector(".strip-view");
-    var cells = Array.prototype.slice.call(strip.querySelectorAll(".strip-item"));
+    var track = strip.querySelector(".strip-track");
     var prev = strip.querySelector(".strip-prev");
     var next = strip.querySelector(".strip-next");
-    if (!view || !cells.length || !prev || !next) return;
+    if (!view || !track || !prev || !next) return;
 
-    var centreOf = function (cell) {
-      return cell.offsetLeft + cell.offsetWidth / 2 - view.clientWidth / 2;
+    var originals = Array.prototype.slice.call(track.children);
+    if (originals.length < 2) return;
+
+    /* One duplicate set is enough to cover any viewport wider than the set,
+       because the jump happens at exactly one set width. */
+    originals.forEach(function (cell) {
+      var copy = cell.cloneNode(true);
+      copy.setAttribute("aria-hidden", "true");
+      copy.setAttribute("tabindex", "-1");
+      copy.classList.add("is-clone");
+      track.appendChild(copy);
+    });
+
+    var cells = Array.prototype.slice.call(track.children);
+    var setWidth = 0;
+    var measure = function () {
+      /* distance from the first cell to its own clone: one whole set */
+      setWidth = cells[originals.length].offsetLeft - cells[0].offsetLeft;
     };
 
-    var focusedIndex = function () {
-      var mid = view.scrollLeft + view.clientWidth / 2;
-      var best = 0, dist = Infinity;
-      cells.forEach(function (cell, i) {
-        var d = Math.abs(cell.offsetLeft + cell.offsetWidth / 2 - mid);
-        if (d < dist) { dist = d; best = i; }
-      });
-      return best;
+    /* The drift keeps its own position because a fractional increment written
+       straight to scrollLeft can be rounded away, and at this speed every
+       frame moves less than a quarter of a pixel: the rounding would eat the
+       whole movement and the strip would sit still. Reset to null whenever
+       something else moves the strip, so the next frame re-reads it. */
+    var pos = null;
+
+    var wrap = function () {
+      if (setWidth <= 0) return;
+      if (pos === null) pos = view.scrollLeft;
+      if (pos >= setWidth) pos -= setWidth;
+      else if (pos < 0) pos += setWidth;
+      view.scrollLeft = pos;
     };
 
-    /* Depth: each cell shrinks and dims by how far it sits from the middle.
-       Painted at most once a frame, and not at all under reduced motion. */
-    var painting = false;
+    /* Depth: each cell shrinks and dims by how far it sits from the middle. */
     var paint = function () {
-      painting = false;
+      if (reduced.matches) return;
       var mid = view.scrollLeft + view.clientWidth / 2;
       var span = view.clientWidth;
       cells.forEach(function (cell) {
@@ -841,36 +868,80 @@
         var fade = Math.max(0.38, 1 - d * 1.5);
         cell.style.transform = "scale(" + scale.toFixed(3) + ")";
         cell.style.opacity = fade.toFixed(3);
-        cell.classList.toggle("is-focus", d < 0.18);
+        cell.classList.toggle("is-focus", d < 0.14);
       });
     };
-    var requestPaint = function () {
-      if (reduced.matches) return;
-      if (!painting) { painting = true; window.requestAnimationFrame(paint); }
+
+    /* Reasons the drift is currently stopped. It runs only when none hold. */
+    var held = { hover: false, press: false, hidden: document.hidden, off: true, step: false };
+    var running = false, last = 0, raf = 0;
+
+    var frame = function (now) {
+      if (!running) return;
+      var dt = Math.min((now - last) / 1000, 0.05); /* clamp after a stall */
+      last = now;
+      if (pos === null) pos = view.scrollLeft;
+      pos += DRIFT * dt;
+      wrap();
+      paint();
+      raf = window.requestAnimationFrame(frame);
     };
 
-    var syncArrows = function () {
-      var i = focusedIndex();
-      prev.disabled = i <= 0;
-      next.disabled = i >= cells.length - 1;
+    var sync = function () {
+      var should = !reduced.matches &&
+        !held.hover && !held.press && !held.hidden && !held.off && !held.step;
+      if (should === running) return;
+      running = should;
+      if (running) {
+        last = window.performance.now();
+        pos = null; /* something else may have moved it while we were stopped */
+        raf = window.requestAnimationFrame(frame);
+      } else {
+        window.cancelAnimationFrame(raf);
+      }
     };
 
+    var hold = function (key, on) { held[key] = on; sync(); };
+
+    /* Arrows step one capture and hand back to the drift once it has landed. */
+    var stepTimer = 0;
     var step = function (dir) {
-      var target = cells[Math.min(cells.length - 1, Math.max(0, focusedIndex() + dir))];
+      var mid = view.scrollLeft + view.clientWidth / 2;
+      var best = null, dist = Infinity;
+      cells.forEach(function (cell, i) {
+        var d = Math.abs(cell.offsetLeft + cell.offsetWidth / 2 - mid);
+        if (d < dist) { dist = d; best = i; }
+      });
+      var target = cells[Math.min(cells.length - 1, Math.max(0, best + dir))];
+      if (!target) return;
+      hold("step", true);
       view.scrollTo({
-        left: centreOf(target),
+        left: target.offsetLeft + target.offsetWidth / 2 - view.clientWidth / 2,
         behavior: reduced.matches ? "auto" : "smooth"
       });
-      window.setTimeout(syncArrows, 260);
-      window.setTimeout(syncArrows, 800);
+      window.clearTimeout(stepTimer);
+      stepTimer = window.setTimeout(function () {
+        /* the arrow moved it, so the drift position is stale: re-read before
+           wrapping, or the wrap writes the old position straight back */
+        pos = null;
+        wrap();
+        hold("step", false);
+      }, 700);
     };
     prev.addEventListener("click", function () { step(-1); });
     next.addEventListener("click", function () { step(1); });
 
-    view.addEventListener("scroll", function () { requestPaint(); syncArrows(); }, { passive: true });
+    view.addEventListener("scroll", paint, { passive: true });
+    strip.addEventListener("pointerenter", function () { hold("hover", true); });
+    strip.addEventListener("pointerleave", function () { hold("hover", false); });
+    strip.addEventListener("focusin", function () { hold("hover", true); });
+    strip.addEventListener("focusout", function () { hold("hover", false); });
+    view.addEventListener("pointerdown", function () { hold("press", true); });
+    window.addEventListener("pointerup", function () { hold("press", false); }, { passive: true });
+    document.addEventListener("visibilitychange", function () { hold("hidden", document.hidden); });
 
     var settle = function () {
-      /* start on the first capture, arrows and depth agreeing with it */
+      measure();
       if (reduced.matches) {
         cells.forEach(function (cell) {
           cell.style.transform = ""; cell.style.opacity = "";
@@ -879,14 +950,21 @@
       } else {
         paint();
       }
-      syncArrows();
+      sync();
     };
-    window.addEventListener("resize", function () {
-      window.setTimeout(settle, 120);
-    }, { passive: true });
-    if (typeof reduced.addEventListener === "function") {
-      reduced.addEventListener("change", settle);
+    window.addEventListener("resize", function () { window.setTimeout(settle, 120); }, { passive: true });
+    if (typeof reduced.addEventListener === "function") reduced.addEventListener("change", settle);
+
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) { hold("off", !entry.isIntersecting); });
+      }, { threshold: 0.15 }).observe(strip);
+    } else {
+      held.off = false;
     }
+
+    /* Images arrive late, and the set width depends on them. */
+    window.addEventListener("load", settle);
     settle();
   });
 })();

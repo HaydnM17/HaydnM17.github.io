@@ -1025,7 +1025,8 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 .strip-view {
   container-type: inline-size;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;
+  /* No snap: the strip drifts continuously, and a snap would keep hauling it
+     back to the nearest cell mid-drift. */
   scrollbar-width: none;
   /* a trackpad swipe past the end stays on the page instead of going back */
   overscroll-behavior-x: contain;
@@ -1040,7 +1041,7 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 }
 .strip-item {
   flex: 0 0 var(--cellw);
-  scroll-snap-align: center;
+  will-change: transform;
   display: block; overflow: hidden; padding: 0;
   aspect-ratio: var(--cell, 16 / 11);
   border: 1px solid var(--line); background: var(--card);
@@ -1074,3 +1075,15 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
    too tall to be worth a lightbox. */
 .project-media-pair { background: none; overflow: visible; }
 .project-media-pair .reel-pair { max-width: 880px; }
+
+/* --- The site project on the portfolio page --------------------------------
+   The write-up sits left and the two screens sit beside it, so the preview
+   fills the space the text leaves instead of a band of empty column above it.
+   The phone tucks in close to the browser rather than drifting to the far
+   edge, which is what left a gap between them. */
+@media (min-width: 900px) {
+  .project-site { grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); align-items: center; }
+  .project-site .project-body { max-width: 38ch; }
+  .project-site .project-media { order: 2; }
+}
+.project-media-pair .reel-pair { gap: 2.5%; align-items: flex-end; }
