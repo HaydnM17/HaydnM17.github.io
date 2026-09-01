@@ -58,8 +58,10 @@ Notes that cost time to rediscover:
 
 ## Project previews
 
-The previews on the home page and on `portfolio.html` are animated in the
-browser, not videos. Each `[data-reel]` frame holds `.reel-slide` units. A slide
+The previews on the home page are animated in the browser, not videos. The
+portfolio page instead lays every capture out in `[data-strip]` filmstrips,
+paged by arrow buttons over a native scroll-snap view, with each cell feeding
+the existing lightbox. Each `[data-reel]` frame holds `.reel-slide` units. A slide
 is one page: an optional `.reel-head` pinned at the top the way a real sticky
 header is, and a `.reel-page` that scrolls underneath it. `script.js` runs every
 slide on the same fixed beat whatever its height, which is what keeps the

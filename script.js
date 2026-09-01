@@ -349,8 +349,11 @@
 
     document.querySelectorAll(".zoom").forEach(function (btn) {
       btn.addEventListener("click", function () {
-        /* On an animated preview, blow up the page that is actually showing. */
-        var img = btn.querySelector(".reel-slide.is-live .reel-page") || btn.querySelector("img");
+        /* On an animated preview, blow up the page that is actually showing.
+           On a strip cell that stacks a header over a page, blow up the page. */
+        var img = btn.querySelector(".reel-slide.is-live .reel-page") ||
+                  btn.querySelector(".strip-main") ||
+                  btn.querySelector("img");
         if (img) open(img);
       });
     });
@@ -592,7 +595,7 @@
 
   /* One slide: settle, scroll the page, rest, then point and click. A page
      with nothing to scroll skips only the scroll. */
-  var HOLD_TOP = 1500;
+  var HOLD_TOP = 450;
   var SCROLL_MS = 12000;
   var HOLD_END = 1700;
   /* A page has to overflow its frame by a real amount to be worth scrolling.
@@ -787,4 +790,51 @@
     window.clearTimeout(resizeTimer);
     resizeTimer = window.setTimeout(resyncAll, 250);
   }, { passive: true });
+})();
+
+/* ---- Screenshot strips (portfolio) ---------------------------------------
+   Every capture of a project, three or so at a time, paged with the arrows or
+   swiped directly: the view is a native horizontal scroller with snap points,
+   so the browser supplies the motion, the interruption handling and the touch
+   behaviour, and the arrows just drive it. Smooth paging steps aside under
+   reduced motion. Each cell is still a .zoom button, so the lightbox works on
+   every picture. */
+(function () {
+  var strips = document.querySelectorAll("[data-strip]");
+  if (!strips.length) return;
+
+  var reduced = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  Array.prototype.forEach.call(strips, function (strip) {
+    var view = strip.querySelector(".strip-view");
+    var prev = strip.querySelector(".strip-prev");
+    var next = strip.querySelector(".strip-next");
+    if (!view || !prev || !next) return;
+
+    var page = function (dir) {
+      view.scrollBy({
+        left: dir * view.clientWidth * 0.92,
+        behavior: reduced.matches ? "auto" : "smooth"
+      });
+      /* The scroll listener keeps the arrows honest during a swipe, but a
+         smooth scroll settles on its own time, so check again after the ride
+         as well rather than trusting the last event to arrive. */
+      window.setTimeout(sync, 250);
+      window.setTimeout(sync, 800);
+    };
+    prev.addEventListener("click", function () { page(-1); });
+    next.addEventListener("click", function () { page(1); });
+
+    /* The arrows grey out at the ends, and disappear entirely on a strip
+       whose pictures already all fit. */
+    var sync = function () {
+      var max = view.scrollWidth - view.clientWidth;
+      prev.disabled = view.scrollLeft < 2;
+      next.disabled = view.scrollLeft > max - 2;
+      strip.classList.toggle("strip-static", max < 4);
+    };
+    view.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync, { passive: true });
+    sync();
+  });
 })();

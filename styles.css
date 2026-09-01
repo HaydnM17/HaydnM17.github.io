@@ -641,6 +641,20 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 @media (min-width: 760px) {
   .teaser-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
+/* On a wide screen the row breaks out past the text column, and the widths
+   shift toward the site pair and the phone. Movement Unlimited keeps roughly
+   the size it had; the other two grow into the reclaimed space. Bottom
+   alignment keeps the three names on one line even though the boxes are no
+   longer the same height. */
+@media (min-width: 1200px) {
+  .teaser-grid {
+    --breakout: min(100vw - 2rem, 1360px);
+    width: var(--breakout);
+    margin-inline: calc((100% - var(--breakout)) / 2);
+    grid-template-columns: 1.28fr 0.94fr 1.08fr;
+    align-items: end;
+  }
+}
 .teaser {
   display: grid; gap: 0.4rem; align-content: start;
   justify-items: center; text-align: center;
@@ -660,6 +674,11 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 }
 .teaser-shot .device-browser { width: 100%; height: 100%; aspect-ratio: 16 / 10; }
 .teaser-shot-phone .device-phone { width: auto; height: 100%; aspect-ratio: 1080 / 2400; }
+/* The phone on its own gets a taller box than the pair, so it stands larger
+   than the small phone beside the browser rather than matching it. */
+@media (min-width: 1200px) {
+  .teaser-shot-phone { aspect-ratio: 16 / 13.5; }
+}
 /* A pair inside a teaser: the phone takes the full height of the box and the
    browser takes whatever width is left, so both fit a third of the row and
    still sit on the same baseline. Sizing the browser by width instead would
@@ -974,3 +993,51 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   padding-block: 4px;
 }
 .nav { align-items: center; }
+
+/* --- Screenshot strips (portfolio) ----------------------------------------
+   Every capture of a project on the page at once, a few at a time, paged with
+   the arrows or swiped directly. The view is a native scroller with the
+   scrollbar hidden, so it stays touchable and keyboard-scrollable, and every
+   cell is the same .zoom button the lightbox already listens to. A cell that
+   shows a page taller than itself crops from the top, exactly like a browser
+   showing the top of that page. */
+.strip { display: grid; gap: 0.85rem; }
+.strip-view {
+  overflow-x: auto;
+  /* proximity rather than mandatory: a mandatory snap cannot rest at the far
+     end unless a cell begins exactly there, so the last page kept bouncing
+     back and the next arrow could never disable */
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+}
+.strip-view::-webkit-scrollbar { display: none; }
+.strip-track { display: flex; gap: 0.6rem; }
+.strip-item {
+  flex: 0 0 calc((100% - 0.6rem) / 2);
+  scroll-snap-align: start;
+  display: block; overflow: hidden; padding: 0;
+  aspect-ratio: var(--cell, 16 / 11);
+  border: 1px solid var(--line); background: var(--card);
+  cursor: pointer;
+}
+.strip-item img { display: block; width: 100%; height: auto; }
+/* Portrait cells fit three across where landscape pages fit two. */
+.strip-phone .strip-item { --cell: 540 / 1200; flex-basis: calc((100% - 1.2rem) / 3); }
+@media (max-width: 560px) {
+  .strip-item { flex-basis: 78%; }
+  .strip-phone .strip-item { flex-basis: calc((100% - 0.6rem) / 2); }
+}
+
+.strip-nav { display: flex; gap: 0.5rem; justify-content: flex-end; }
+.strip-btn {
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  background: none; border: 1px solid var(--line-int); color: var(--chalk);
+  font-size: 1.05rem; line-height: 1; cursor: pointer;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+.strip-btn:hover:not(:disabled),
+.strip-btn:focus-visible { border-color: var(--brass); color: var(--brass); }
+.strip-btn:disabled { opacity: 0.35; cursor: default; }
+/* a strip whose pictures already all fit needs no paging at all */
+.strip-static .strip-nav { display: none; }
