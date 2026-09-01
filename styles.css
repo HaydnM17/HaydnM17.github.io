@@ -295,7 +295,7 @@ a { color: inherit; }
 .project-media { overflow: hidden; background: var(--card); }
 .project-media img:not(.reel-page) { transition: transform 0.2s ease; width: 100%; }
 /* scoped to the hovered image itself, so one shot moving never moves its neighbours */
-.zoom:focus-visible img:not(.reel-page):not(.reel-head) { transform: scale(1.04); }
+.zoom:not(.strip-item):focus-visible img:not(.reel-page):not(.reel-head) { transform: scale(1.04); }
 /* A preview is a stack of positioned images, so the lift belongs to the whole
    device. Scaling one image inside it moved the pinned header on its own. */
 .zoom .device { transition: transform 0.2s ease; }
@@ -955,7 +955,8 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
   .nav a:not(.nav-cta):hover::after { transform: scaleX(1); transform-origin: left; }
   .btn-primary:hover, .btn-ghost:hover { transform: translateY(-2px); }
   .btn-primary:hover::after { transform: translateX(270%) skewX(-18deg); }
-  .zoom:hover img:not(.reel-page):not(.reel-head) { transform: scale(1.04); }
+  .zoom:not(.strip-item):hover img:not(.reel-page):not(.reel-head) { transform: scale(1.04); }
+  .zoom.strip-item:hover { transform: translateY(-4px); }
   .zoom:hover .device { transform: scale(1.025); }
   .layer:hover::after { transform: scaleY(1); }
 }
@@ -1001,7 +1002,20 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
    cell is the same .zoom button the lightbox already listens to. A cell that
    shows a page taller than itself crops from the top, exactly like a browser
    showing the top of that page. */
+/* A filmstrip project runs the write-up on top and the strip across the full
+   column width underneath, so the captures get real size instead of being
+   crushed into half a row beside the text. */
+.project-media-strip { background: none; overflow: visible; }
+/* write-up first at every width, pictures after it */
+.project-strip .project-media { order: 2; }
+@media (min-width: 900px) {
+  .project-strip { grid-template-columns: 1fr; align-items: start; }
+  .project-strip .project-body { max-width: 640px; }
+}
+
 .strip { display: grid; gap: 0.85rem; }
+/* arrows sit above the pictures, where the eye lands first */
+.strip-nav { order: -1; }
 .strip-view {
   overflow-x: auto;
   /* proximity rather than mandatory: a mandatory snap cannot rest at the far
@@ -1009,20 +1023,28 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
      back and the next arrow could never disable */
   scroll-snap-type: x proximity;
   scrollbar-width: none;
+  /* a trackpad swipe past the end stays on the page instead of going back */
+  overscroll-behavior-x: contain;
 }
 .strip-view::-webkit-scrollbar { display: none; }
 .strip-track { display: flex; gap: 0.6rem; }
 .strip-item {
-  flex: 0 0 calc((100% - 0.6rem) / 2);
+  flex: 0 0 calc((100% - 1.2rem) / 3);
   scroll-snap-align: start;
   display: block; overflow: hidden; padding: 0;
   aspect-ratio: var(--cell, 16 / 11);
   border: 1px solid var(--line); background: var(--card);
   cursor: pointer;
+  transition: border-color 0.2s var(--ease), transform 0.2s ease;
 }
+.strip-item:hover, .strip-item:focus-visible { border-color: var(--line-int); }
 .strip-item img { display: block; width: 100%; height: auto; }
-/* Portrait cells fit three across where landscape pages fit two. */
-.strip-phone .strip-item { --cell: 540 / 1200; flex-basis: calc((100% - 1.2rem) / 3); }
+/* Portrait cells fit four across where landscape pages fit three. */
+.strip-phone .strip-item { --cell: 540 / 1200; flex-basis: calc((100% - 1.8rem) / 4); }
+@media (max-width: 900px) {
+  .strip-item { flex-basis: calc((100% - 0.6rem) / 2); }
+  .strip-phone .strip-item { flex-basis: calc((100% - 1.2rem) / 3); }
+}
 @media (max-width: 560px) {
   .strip-item { flex-basis: 78%; }
   .strip-phone .strip-item { flex-basis: calc((100% - 0.6rem) / 2); }
