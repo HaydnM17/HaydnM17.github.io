@@ -7,6 +7,9 @@ dist/
 # Local Claude Code settings, machine specific and not part of the site
 .claude/
 
+# Agent working notes, internal and not part of the site
+CLAUDE.md
+
 # OS junk
 Thumbs.db
 desktop.ini
