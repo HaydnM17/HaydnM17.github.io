@@ -633,13 +633,18 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
 /* Three across on a wide screen. These are a glance at the work with the real
    detail a click away, so they stay a row rather than a stack that eats the
    page. They fall to one column only when the screen cannot hold three. */
+/* A centred row whose gap is measured between the previews themselves. As a
+   grid of fixed columns the narrow phone did not fill its track, so the space
+   before it was three times the space before Movement Unlimited. Each teaser
+   is now only as wide as the device it holds. */
 .teaser-grid {
-  display: grid; gap: clamp(2rem, 4vw, 3rem);
+  display: flex; flex-wrap: wrap;
+  justify-content: center; align-items: flex-end;
+  gap: clamp(2rem, 4vw, 3rem);
   margin-top: clamp(2.5rem, 4.5vw, 3.5rem);
   margin-bottom: clamp(2.75rem, 5vw, 4rem);
-}
-@media (min-width: 760px) {
-  .teaser-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* one shared device height, so the three sit on a common baseline */
+  --shot: min(280px, 20vw);
 }
 /* On a wide screen the row breaks out past the text column, and the widths
    shift toward the site pair and the phone. Movement Unlimited keeps roughly
@@ -651,14 +656,21 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
     --breakout: min(100vw - 2rem, 1360px);
     width: var(--breakout);
     margin-inline: calc((100% - var(--breakout)) / 2);
-    grid-template-columns: 1.28fr 0.94fr 1.08fr;
-    align-items: end;
   }
 }
 .teaser {
   display: grid; gap: 0.4rem; align-content: start;
   justify-items: center; text-align: center;
   text-decoration: none;
+  width: max-content;
+}
+/* The names are wider than a phone. Laid out normally they would set the
+   teaser's width and push the previews apart again, so they are given no
+   width of their own and simply centre over whatever the preview is. */
+.teaser-meta, .teaser-name {
+  width: 0; min-width: 100%;
+  display: flex; justify-content: center;
+  white-space: nowrap;
 }
 .teaser-name { transition: color 0.3s var(--ease); }
 .teaser:hover .teaser-name, .teaser:focus-visible .teaser-name { color: var(--brass); }
@@ -670,21 +682,18 @@ html { scrollbar-color: #2C3D34 var(--ground); scrollbar-width: thin; }
    three names no longer lined up across the row. */
 .teaser-shot {
   display: flex; align-items: flex-end; justify-content: center;
-  width: 100%; aspect-ratio: 16 / 10; margin-bottom: 1.4rem;
+  height: var(--shot); width: max-content; margin-bottom: 1.4rem;
 }
-.teaser-shot .device-browser { width: 100%; height: 100%; aspect-ratio: 16 / 10; }
+.teaser-shot .device-browser { height: 100%; width: auto; aspect-ratio: 16 / 10; }
 .teaser-shot-phone .device-phone { width: auto; height: 100%; aspect-ratio: 1080 / 2400; }
 /* The phone on its own gets a taller box than the pair, so it stands larger
    than the small phone beside the browser rather than matching it. */
-@media (min-width: 1200px) {
-  .teaser-shot-phone { aspect-ratio: 16 / 13.5; }
-}
 /* A pair inside a teaser: the phone takes the full height of the box and the
    browser takes whatever width is left, so both fit a third of the row and
    still sit on the same baseline. Sizing the browser by width instead would
    push the phone out of the column. */
-.teaser-shot .reel-pair { width: 100%; height: 100%; gap: 4%; align-items: flex-end; }
-.teaser-shot .reel-pair .device-browser { flex: 1 1 auto; width: auto; height: auto; aspect-ratio: 16 / 10; }
+.teaser-shot .reel-pair { width: max-content; height: 100%; gap: 16px; align-items: flex-end; }
+.teaser-shot .reel-pair .device-browser { flex: 0 0 auto; width: auto; height: 84%; aspect-ratio: 16 / 10; }
 .teaser-shot .reel-pair .device-phone { flex: 0 0 auto; width: auto; height: 100%; aspect-ratio: 422 / 966; }
 .teaser-meta {
   font-size: var(--fs-label); font-weight: 600; letter-spacing: 0.14em;
