@@ -1,0 +1,15 @@
+# v1.haydnmcintyre.ca, the archived first version of the site.
+#
+# Crawling is deliberately ALLOWED here. Every page carries
+# <meta name="robots" content="noindex">, and a crawler has to be able to
+# fetch a page to read that. Disallowing it would do the opposite of what is
+# wanted: the pages could not be re-crawled, the noindex would never be seen,
+# and anything already indexed would stay in the results as a bare link.
+#
+# The current site is https://haydnmcintyre.ca and that is the one to index.
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+# No Sitemap line on purpose. Nothing here is meant to be indexed.

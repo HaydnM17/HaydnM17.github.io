@@ -1,0 +1,5 @@
+# Same noindex as the meta tag in the pages, sent as a header so it also covers
+# the things a <meta> cannot reach: the screenshots under assets/, and anything
+# else served here that is not HTML. Image search counts as competing too.
+/*
+  X-Robots-Tag: noindex

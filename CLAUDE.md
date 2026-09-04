@@ -1,9 +1,25 @@
 # haydnmcintyre.ca
 
-Haydn McIntyre's personal site and portfolio. Live at <https://haydnmcintyre.ca>.
+Haydn McIntyre's personal site and portfolio, version 1. Archived, and live
+at <https://v1.haydnmcintyre.ca> only. See "This is the archived v1" below.
 
 Plain HTML, CSS and vanilla JavaScript. No framework, no build step, no npm.
 Two pages: `index.html` (home) and `portfolio.html`.
+
+## This is the archived v1
+
+The current site is <https://haydnmcintyre.ca>, built from
+`HaydnM17/haydnmcintyre.ca-v2`. This repository is the first version of it, kept
+live at <https://v1.haydnmcintyre.ca> because the current portfolio links to it
+as a piece of work you can go and look at.
+
+It is the same name and the same person as the live site, so it must never turn
+up in search: anything it ranks for, it takes from there. Both pages carry
+`<meta name="robots" content="noindex, follow">`, `_headers` sends the same
+thing as `X-Robots-Tag` so it also covers the screenshots, and `robots.txt`
+deliberately leaves crawling open, because a page that cannot be crawled is a
+page whose noindex is never read. Do not "fix" that by disallowing everything,
+and do not drop the meta tags when editing the heads.
 
 ## Deploying
 
